@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Судейская книга</title>
+<style>
+:root{
+  --bg:#f4f5f7; --card:#ffffff; --line:#d9dce1; --txt:#1c1e21; --muted:#6b7280;
+  --accent:#1a56db; --accent2:#e8eefc; --danger:#c81e1e; --warn:#b45309; --ok:#047857;
+}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 "Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--txt)}
+header{background:#111827;color:#fff;padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:600}
+header .comp{font-size:13px;color:#9ca3af}
+header .sp{flex:1}
+button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 12px;font-size:13px}
+button:hover{background:#f0f1f3}
+button.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+button.pri:hover{background:#1748b5}
+button.dng{color:var(--danger);border-color:#f1c1c1}
+nav{display:flex;gap:4px;padding:8px 16px 0;background:var(--bg);flex-wrap:wrap}
+nav button{border-radius:8px 8px 0 0;border-bottom:none;background:#e5e7eb;font-size:13px}
+nav button.on{background:var(--card);font-weight:600;color:var(--accent)}
+main{padding:16px}
+section.tab{display:none}
+section.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:14px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.toolbar .info{color:var(--muted);font-size:13px;margin-left:auto}
+table{border-collapse:collapse;width:100%;background:#fff}
+th,td{border:1px solid var(--line);padding:5px 7px;text-align:left;vertical-align:middle}
+th{background:#f0f2f5;font-size:12px;position:sticky;top:0}
+tbody tr:hover{background:#f8faff}
+input,select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:5px;background:#fff;width:100%}
+input:focus,select:focus{outline:2px solid var(--accent2);border-color:var(--accent)}
+td input,td select{border-color:transparent;background:transparent}
+td input:hover,td select:hover{border-color:var(--line);background:#fff}
+.num{text-align:right;white-space:nowrap}
+.ctr{text-align:center}
+.miss{color:var(--warn);font-weight:600}
+.badge{display:inline-block;background:var(--accent2);color:var(--accent);border-radius:10px;padding:1px 8px;font-size:12px}
+.badge.warn{background:#fdf0e4;color:var(--warn)}
+.tatami-title{background:#111827;color:#fff;font-weight:600;padding:6px 10px;border-radius:6px 6px 0 0;margin:18px 0 0;font-size:14px}
+.total-row td{font-weight:700;background:#eef2ff}
+h3{margin:4px 0 10px}
+.hint{color:var(--muted);font-size:12px;margin:6px 0}
+dialog{border:1px solid var(--line);border-radius:10px;padding:18px;max-width:720px;width:92%}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid2 label{font-size:12px;color:var(--muted);display:block;margin-bottom:3px}
+.grid2 input,.grid2 select{margin-bottom:8px}
+#printArea{display:none}
+#printArea .pa-fio{white-space:nowrap}
+
+.demo-wm{position:fixed;top:42%;left:0;right:0;text-align:center;transform:rotate(-28deg);
+  font:900 90pt Arial,sans-serif;color:rgba(200,30,30,.13);z-index:99999;pointer-events:none;
+  letter-spacing:14px;white-space:nowrap}
+@media print{
+  body{background:#fff!important}
+  body>*{display:none!important}
+  #printArea{display:block!important;background:#fff}
+  table{page-break-inside:auto}
+  tr{page-break-inside:avoid}
+}
+.pa-doc{font:12pt/1.4 "Times New Roman",serif;color:#000}
+.pa-center{text-align:center;margin:0 0 2px}
+.pa-title{font-weight:bold;font-size:13pt;margin:10px 0 2px;text-align:center}
+.pa-table{width:100%;border-collapse:collapse;font-size:11pt}
+.pa-table th,.pa-table td{border:1px solid #000;padding:3px 6px}
+.pa-sign{margin-top:26px;display:flex;justify-content:space-between;font-size:12pt}
+/* справки экзамена: крупный бланк на всю страницу */
+.cert-table{width:680px;margin:0 auto;border-collapse:collapse;font-size:13pt;color:#000}
+.cert-table td,.cert-table th{border:1px solid #000;padding:14px 16px;vertical-align:middle}
+.roster-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+@media(max-width:900px){.roster-grid{grid-template-columns:1fr}}
+.landscape .pa-doc{transform-origin:top left}
+</style>
+</head>
+<body>
+<header>
+  <h1>🥋 Судейская книга</h1>
+  <span class="comp" id="compName"></span>
+  <span class="sp"></span>
+  <button onclick="saveFile()" title="Сохранить проект: откроется окно выбора папки (в Chrome/Edge), файл можно перезаписать без дублей">💾 Сохранить</button>
+  <button onclick="document.getElementById('fileInp').click()" title="Загрузить файл проекта">📂 Загрузить</button>
+  <input type="file" id="fileInp" accept=".json" style="display:none" onchange="loadFile(event)">
+  <button class="dng" onclick="newProject()">🗑 Новый проект</button>
+  <button onclick="openSettings()">⚙ Настройки</button>
+</header>
+<nav id="tabs"></nav>
+<main>
+  <section class="tab" id="tab-judges"></section>
+  <section class="tab" id="tab-tatami"></section>
+  <section class="tab" id="tab-payroll"></section>
+  <section class="tab" id="tab-final"></section>
+  <section class="tab" id="tab-roster"></section>
+  <section class="tab" id="tab-tariffs"></section>
+  <section class="tab" id="tab-exam"></section>
+  <section class="tab" id="tab-report"></section>
+</main>
+
+<dialog id="dlgPaste">
+  <h3>Вставка судей списком</h3>
+  <p class="hint">Скопируйте список с сайта регистрации и вставьте сюда как есть. Программа понимает родной формат сайта
+  (№, ФИО, регион, категории, татами, должность) и раскладывает всё по полям автоматически. Также понимает обычный текст
+  с пробелами. Дубликаты по ФИО пропускаются. Ниже появится предпросмотр — проверьте, что всё распозналось.</p>
+  <textarea id="pasteText" rows="10" style="width:100%;font:12px monospace"></textarea>
+  <div id="pastePreview" style="max-height:220px;overflow:auto;margin-top:8px"></div>
+  <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+    <button onclick="closeDlg('dlgPaste')">Отмена</button>
+    <button onclick="parsePaste()">Разобрать</button>
+    <button class="pri" id="pasteAddBtn" onclick="addParsed()" disabled>Добавить</button>
+  </div>
+</dialog>
+
+<dialog id="dlgExamPaste">
+  <h3>Вставка результатов экзамена списком</h3>
+  <p class="hint">Вставьте список участников как есть — из Excel (выгрузка теста: №, ФИО, даты, ход, результат),
+  с сайта регистрации или обычный текст (ФИО, регион, категория, дисциплина). Программа сама найдёт ФИО,
+  регион, категорию, дисциплину (кумитэ/ката/тренерский) и процент теории. Дубликаты пропускаются.</p>
+  <textarea id="pasteExamText" rows="10" style="width:100%;font:12px monospace"></textarea>
+  <div id="examPastePreview" style="max-height:200px;overflow:auto;margin-top:8px"></div>
+  <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+    <button onclick="closeDlg('dlgExamPaste')">Отмена</button>
+    <button onclick="parseExamPaste()">Разобрать</button>
+    <button class="pri" id="examPasteAddBtn" onclick="addExamParsed()" disabled>Добавить</button>
+  </div>
+</dialog>
+
+<dialog id="dlgAuto" style="max-width:940px">
+  <h3>Автораспределение судей по татами</h3>
+  <p class="hint">1) Задайте количество татами, тип каждой площадки (кумитэ / ката / ката+кумитэ) и вручную назначьте старшего судью с замом.
+  2) Нажмите «Распределить» — остальные судьи разойдутся по площадкам случайно, но с балансом: равномерно по числу,
+  категориям и регионам. 3) Проверьте предпросмотр и примените. После этого раскладку можно подправить вручную
+  (колонка «Татами» в списке судей). Распределяются все, включая резерв — должности назначаются после.
+  На печать по-прежнему попадают только судьи с должностью.</p>
+  <div class="toolbar">
+    <label style="font-size:13px;display:flex;gap:6px;align-items:center">Татами:
+      <input id="autoTatamiCount" type="number" min="1" max="16" value="4" style="width:60px" onchange="buildAutoGrid()"></label>
+    <button class="pri" onclick="runAuto()">🎲 Распределить</button>
+    <button class="pri" id="autoApplyBtn" onclick="applyAuto()" disabled>✔ Применить</button>
+    <span class="info" id="autoInfo"></span>
+  </div>
+  <div id="autoGrid"></div>
+  <div id="autoPreview" style="max-height:44vh;overflow:auto;margin-top:10px"></div>
+  <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+    <button onclick="closeDlg('dlgAuto')">Закрыть</button>
+  </div>
+</dialog>
+
+<dialog id="dlgJury">
+  <h3>Аппеляционное жюри</h3>
+  <p class="hint">Отметьте судей из рабочего состава. Список жюри выводится в итоговом списке судей.</p>
+  <div id="juryList" style="max-height:50vh;overflow:auto"></div>
+  <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+    <button onclick="closeDlg('dlgJury')">Закрыть</button>
+  </div>
+</dialog>
+
+<dialog id="dlgSettings">
+  <h3>Настройки соревнования</h3>
+  <div class="grid2" id="settingsForm"></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end">
+    <button onclick="closeDlg('dlgSettings')">Отмена</button>
+    <button class="pri" onclick="saveSettings()">Сохранить</button>
+  </div>
+</dialog>
+
+<div id="printArea"></div>
+
+<script>
+/* ============================================================
+   СУДЕЙСКАЯ КНИГА — автономная программа (один файл, офлайн)
+   Поток работы:
+   1. "Судьи"      — вносим/вставляем зарегистрировавшихся,
+                     раздаём должности и татами.
+   2. "По татами"  — табелируем: коэффициенты дней (1 = полный день,
+                     0,5 = полдня, 1,2 = +20%), ставим оценки.
+   3. "Ведомость"  — зарплата считается автоматически по тарифам.
+   4. "Итоговый"   — печатный список судей (как в Word).
+   Данные хранятся в localStorage и сохраняются в файл JSON.
+   ============================================================ */
+
+/* ---------- Справочники ---------- */
+// Иерархия должностей: от старшей к младшей (порядок сортировки)
+const ROLES = ['Главный судья','Главный секретарь','Зам. главного судьи',
+  'Зам. главного секретаря','Старший судья','Зам. старшего судьи',
+  'Рефери','Судья','Судья-секретарь','Судья-хронометрист'];
+const ROLE_IDX = Object.fromEntries(ROLES.map((r,i)=>[r,i]));
+const CATS = ['СВК','С1К','С2К','С3К','ЮС'];
+// «вес» категории для баланса распределения (чем выше — тем важнее размазать по площадкам)
+const CAT_RANK = {'СМК':6,'ССВК':5,'СВК':5,'С1К':4,'1К':4,'С2К':3,'2К':3,'С3К':2,'3К':2,'ЮС':1};
+// ГСК — первые 6 должностей; "судьи в поле" — остальные
+const isGSK = role => ROLE_IDX[role] !== undefined && ROLE_IDX[role] < 6;
+const EXAMS = ['Кумитэ','Ката'];
+/* ---------- РЕЖИМ ДЕМО ---------- */
+const DEMO = true;        // в демо-сборке true: не более DEMO_LIMIT судей, на печати плашка «ДЕМО-ВЕРСИЯ»
+const DEMO_LIMIT = 15;
+// ---------- ЛИЦЕНЗИЯ / СРОК ДЕЙСТВИЯ ----------
+// при сборке под клиента в eyJob2xkZXIiOiAi0JTQldCc0J4iLCAiZXhwaXJ5IjogIiJ9 подставляется base64 от {"holder":"Иванов А.В.","expiry":"2027-12-31"}
+const LICENSE = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob('eyJob2xkZXIiOiAiIiwgImV4cGlyeSI6ICIifQ=='), c => c.charCodeAt(0))));
+function licenseState(){
+  if(!LICENSE.expiry) return 'ok';
+  const now = Date.now(), exp = new Date(LICENSE.expiry + 'T23:59:59').getTime();
+  let rollback = false;
+  try{
+    const last = +localStorage.getItem('judgeBook_lastSeen') || 0;
+    if(last && now < last - 7*24*3600*1000) rollback = true;   // часы откинули назад больше чем на неделю
+    if(now > last) localStorage.setItem('judgeBook_lastSeen', now);
+  }catch(e){}
+  if(now > exp) return 'expired';
+  if(rollback) return 'rollback';
+  return 'ok';
+}
+function licenseOverlay(reason){
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;inset:0;background:#111827;z-index:99999;display:flex;align-items:center;justify-content:center;color:#fff;font-family:Segoe UI,Arial';
+  d.innerHTML = `<div style="max-width:540px;text-align:center;padding:30px">
+    <h2 style="color:#f87171;margin:0 0 14px">${reason === 'rollback' ? 'Обнаружен откат системных часов' : 'Срок действия версии истёк'}</h2>
+    <p style="line-height:1.6">Лицензия: <b>${esc(LICENSE.holder || '—')}</b>${LICENSE.expiry ? ' · действовала до ' + esc(LICENSE.expiry) : ''}.</p>
+    <p style="line-height:1.6">Данные вашего проекта <b>в сохранности</b> — их можно выгрузить. Для продления лицензии напишите:<br>
+    <b>t.me/matveich877</b> · matveich87@yandex.ru</p>
+    <button onclick="saveFile()" style="font-size:15px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer">💾 Сохранить проект</button>
+  </div>`;
+  document.body.appendChild(d);
+}
+function demoBlock(){
+  if(DEMO && S.judges.length >= DEMO_LIMIT){
+    alert('Демо-версия: не более ' + DEMO_LIMIT + ' судей.\nПолная версия — без ограничений: t.me/matveich877');
+    return true;
+  }
+  return false;
+}
+
+/* ---------- Состояние ---------- */
+const DEF_TARIFFS = [{"cat": "С1К", "role": "Зам. главного судьи", "rate": 6000, "extraDays": 1}, {"cat": "С1К", "role": "Зам. старшего судьи", "rate": 6000, "extraDays": 0}, {"cat": "С1К", "role": "Рефери", "rate": 3500, "extraDays": 0}, {"cat": "С1К", "role": "Старший судья", "rate": 6000, "extraDays": 0}, {"cat": "С1К", "role": "Судья", "rate": 2000, "extraDays": 0}, {"cat": "С1К", "role": "Судья-секретарь", "rate": 1000, "extraDays": 0}, {"cat": "С2К", "role": "Рефери", "rate": 3500, "extraDays": 0}, {"cat": "С2К", "role": "Судья", "rate": 2000, "extraDays": 0}, {"cat": "С2К", "role": "Судья-секретарь", "rate": 1000, "extraDays": 0}, {"cat": "С3К", "role": "Судья-секретарь", "rate": 1000, "extraDays": 0}, {"cat": "С3К", "role": "Судья-хронометрист", "rate": 1000, "extraDays": 0}, {"cat": "СВК", "role": "Главный секретарь", "rate": 6000, "extraDays": 2}, {"cat": "СВК", "role": "Главный судья", "rate": 7000, "extraDays": 2}, {"cat": "СВК", "role": "Зам. главного секретаря", "rate": 6000, "extraDays": 0}, {"cat": "СВК", "role": "Зам. главного судьи", "rate": 6000, "extraDays": 1}, {"cat": "СВК", "role": "Зам. старшего судьи", "rate": 5000, "extraDays": 0}, {"cat": "СВК", "role": "Рефери", "rate": 3500, "extraDays": 0}, {"cat": "СВК", "role": "Старший судья", "rate": 6000, "extraDays": 0}, {"cat": "СВК", "role": "Судья", "rate": 2000, "extraDays": 0}, {"cat": "ЮС", "role": "Судья-хронометрист", "rate": 1000, "extraDays": 0}, {"cat": "ЮС", "role": "Судья-секретарь", "rate": 1000, "extraDays": 0}];
+
+// столбцы печатной ведомости и настройки по умолчанию
+const PAY_COLS = [['rate','Ставка'],['days','Дни 1–N'],['coef','Σ коэф'],['daysMoney','За дни, ₽'],
+  ['extra','Доп. дни'],['extraMoney','Доп. дни, ₽'],['pct','Допл. 10%'],['misc','Разное, ₽'],['sign','Подпись']];
+function defaultPayPrint(){
+  return {
+    hideZero: false,                 // не показывать судей с нулевой ЗП
+    cats: Object.fromEntries(CATS.map(c => [c, true])),   // какие категории показывать
+    cols: Object.fromEntries(PAY_COLS.map(([k]) => [k, true])),  // какие столбцы печатать
+    rows: {}                         // {id: false} — строки, снятые с печати (нет записи = печатать)
+  };
+}
+// ---------- ЭКЗАМЕН: состояние по умолчанию ----------
+const EXAM_DISCS = ['Кумитэ','Ката','Тренерский'];
+function defaultExam(){
+  return {
+    city: '', date: '', place: '',
+    chair: 'А.В. Сорокин', chairCat: 'СВК',   // председатель аттестационной комиссии
+    level: 'во Всероссийском',               // уровень семинара для справок слушателям
+    parts: []   // [{id, fio, region, disc, curCat, theory, video, practice, newCat}]
+  };
+}
+function defaultState(){
+  return {
+    settings:{
+      comp:'Всероссийские соревнования «Европа-Азия»',
+      compFull:'',                 // возрастные группы, второй строкой шапки
+      city:'г. Оренбург', dates:'2026 г.', days:4,
+      chiefJudge:'', chiefJudgeCat:'',     // подпись главного судьи
+      chiefSec:'', chiefSecCat:'',         // подпись главного секретаря
+      coef:1                               // коэффициент соревнований (0,8 региональные / 1,0 межрегиональные и выше)
+    },
+    judges: DEMO ? [] : [{"id": 1000, "fio": "Асташов А. Д.", "region": "Саратовская область", "catMS": "С2К", "kumite": "С2К", "kata": "", "tatami": 3, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1001, "fio": "Вишнякова М. А.", "region": "Москва", "catMS": "С2К", "kumite": "С2К", "kata": "С2К", "tatami": 1, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1002, "fio": "Галимова К. Т.", "region": "Республика Башкортостан", "catMS": "С2К", "kumite": "С2К", "kata": "", "tatami": 4, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1003, "fio": "Данченко А. В.", "region": "Республика Башкортостан", "catMS": "С3К", "kumite": "С3К", "kata": "", "tatami": 3, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1004, "fio": "Желтов А. В.", "region": "Республика Башкортостан", "catMS": "СВК", "kumite": "СМК", "kata": "", "tatami": 3, "role": "Зам. старшего судьи", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1005, "fio": "Журенко К. Д.", "region": "Республика Башкортостан", "catMS": "С3К", "kumite": "С3К", "kata": "", "tatami": 3, "role": "Судья-секретарь", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1006, "fio": "Загоровский М. Е.", "region": "Пензенская область", "catMS": "С1К", "kumite": "С2К", "kata": "С1К", "tatami": 4, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1007, "fio": "Зарипов А. И.", "region": "Республика Татарстан", "catMS": "С1К", "kumite": "СВК", "kata": "С1К", "tatami": 2, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1008, "fio": "Калдаманов Б.", "region": "Республика Башкортостан", "catMS": "ЮС", "kumite": "ЮС", "kata": "", "tatami": 2, "role": "Судья-секретарь", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1009, "fio": "Карапетян А. В.", "region": "Нижегородская область", "catMS": "СВК", "kumite": "СВК", "kata": "СВК", "tatami": 1, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1010, "fio": "Коротышев Д. В.", "region": "Челябинская область", "catMS": "С1К", "kumite": "С1К", "kata": "", "tatami": 2, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1011, "fio": "Кулагин Г. А.", "region": "Оренбургская область", "catMS": "С2К", "kumite": "С2К", "kata": "С2К", "tatami": 0, "role": "", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1012, "fio": "Кулагина Е. В.", "region": "Оренбургская область", "catMS": "С2К", "kumite": "С3К", "kata": "С2К", "tatami": 0, "role": "", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1013, "fio": "Кутыркин А. А.", "region": "Оренбургская область", "catMS": "С3К", "kumite": "С3К", "kata": "", "tatami": 4, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1014, "fio": "Маннанов И. И.", "region": "Республика Башкортостан", "catMS": "С1К", "kumite": "С1К", "kata": "", "tatami": 3, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1015, "fio": "Марданов Р. А.", "region": "Республика Башкортостан", "catMS": "С2К", "kumite": "С2К", "kata": "", "tatami": 0, "role": "", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1016, "fio": "Михайлова А. А.", "region": "Республика Татарстан", "catMS": "С2К", "kumite": "С2К", "kata": "", "tatami": 4, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1017, "fio": "Музафаров Б. В.", "region": "Республика Башкортостан", "catMS": "С2К", "kumite": "С2К", "kata": "", "tatami": 4, "role": "Судья-секретарь", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1018, "fio": "Мунзук А. О.", "region": "Санкт-Петербург", "catMS": "С1К", "kumite": "СМК", "kata": "", "tatami": 3, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1019, "fio": "Нариманов А. Р.", "region": "Республика Татарстан", "catMS": "С2К", "kumite": "С1К", "kata": "", "tatami": 3, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1020, "fio": "Нариманов Р. Т.", "region": "Саратовская область", "catMS": "СВК", "kumite": "СВК", "kata": "", "tatami": 4, "role": "Зам. старшего судьи", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1021, "fio": "Новикова А. В.", "region": "Республика Крым", "catMS": "СВК", "kumite": "СМК", "kata": "СВК", "tatami": 1, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1022, "fio": "Огородников Н. В.", "region": "Республика Башкортостан", "catMS": "С3К", "kumite": "С3К", "kata": "", "tatami": 4, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1023, "fio": "Пивоваров А. С.", "region": "Самарская область", "catMS": "С1К", "kumite": "С1К", "kata": "", "tatami": 0, "role": "", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1024, "fio": "Сандаков А. О.", "region": "Республика Башкортостан", "catMS": "С3К", "kumite": "С3К", "kata": "", "tatami": 3, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1025, "fio": "Синников А. А.", "region": "Республика Башкортостан", "catMS": "ЮС", "kumite": "ЮС", "kata": "", "tatami": 2, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1026, "fio": "Слепцова О. А.", "region": "Пензенская область", "catMS": "СВК", "kumite": "С1К", "kata": "СВК", "tatami": 1, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1027, "fio": "Сорокин А. В.", "region": "Омская область", "catMS": "СВК", "kumite": "СМК", "kata": "СМК", "tatami": 9, "role": "Главный судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1028, "fio": "Сорокин М. В.", "region": "Омская область", "catMS": "СВК", "kumite": "СМК", "kata": "С1К", "tatami": 3, "role": "Старший судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1029, "fio": "Степанов Д. А.", "region": "Самарская область", "catMS": "С1К", "kumite": "С1К", "kata": "", "tatami": 3, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1030, "fio": "Субачев И. А.", "region": "Пензенская область", "catMS": "С1К", "kumite": "С1К", "kata": "С1К", "tatami": 1, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1031, "fio": "Сулейманов В. А.", "region": "Республика Башкортостан", "catMS": "ЮС", "kumite": "ЮС", "kata": "", "tatami": 0, "role": "", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1032, "fio": "Тарасов А. Ю.", "region": "Самарская область", "catMS": "СВК", "kumite": "СМК", "kata": "СВК", "tatami": 2, "role": "Зам. старшего судьи", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1033, "fio": "Тимербаев В. О.", "region": "Республика Башкортостан", "catMS": "С3К", "kumite": "С3К", "kata": "", "tatami": 1, "role": "Судья-секретарь", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1034, "fio": "Уткин Д. Р.", "region": "Республика Татарстан", "catMS": "С1К", "kumite": "С1К", "kata": "", "tatami": 1, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1035, "fio": "Филиппов М. В.", "region": "Саратовская область", "catMS": "СВК", "kumite": "СМК", "kata": "СМК", "tatami": 1, "role": "Старший судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1036, "fio": "Хайдаров И. Т.", "region": "Республика Башкортостан", "catMS": "С3К", "kumite": "С3К", "kata": "", "tatami": 2, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1037, "fio": "Хайретдинов А. А.", "region": "Республика Башкортостан", "catMS": "С3К", "kumite": "С3К", "kata": "", "tatami": 0, "role": "", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1038, "fio": "Шабатин А. А.", "region": "Оренбургская область", "catMS": "С1К", "kumite": "С1К", "kata": "С1К", "tatami": 1, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1039, "fio": "Шавалеев Р. Р.", "region": "Челябинская область", "catMS": "СВК", "kumite": "СВК", "kata": "", "tatami": 4, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1040, "fio": "Шобонов В. А.", "region": "Нижегородская область", "catMS": "С3К", "kumite": "С3К", "kata": "", "tatami": 2, "role": "Судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1041, "fio": "Якубов И. М.", "region": "Республика Дагестан", "catMS": "С1К", "kumite": "С1К", "kata": "", "tatami": 4, "role": "Рефери", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1042, "fio": "Новский С.И.", "region": "Самарская область", "catMS": "СВК", "kumite": "", "kata": "", "tatami": 9, "role": "Главный секретарь", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1043, "fio": "Булатов Е.М.", "region": "Новосибирская область", "catMS": "СВК", "kumite": "", "kata": "", "tatami": 9, "role": "Зам. главного секретаря", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1044, "fio": "Ефремов Г.Н.", "region": "Хабаровский край", "catMS": "СВК", "kumite": "СМК", "kata": "СМК", "tatami": 1, "role": "Зам. старшего судьи", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}, {"id": 1045, "fio": "Иванов С.Н.", "region": "Москва", "catMS": "С1К", "kumite": "СМК", "kata": "СМК", "tatami": 2, "role": "Старший судья", "exam": "", "rate": "", "days": [], "pct": false, "misc": 0}],
+    tariffs: JSON.parse(JSON.stringify(DEF_TARIFFS)),
+    juries: [],          // аппеляционные жюри: [{members:[id судей]}]
+    supervisor: null,    // супервайзер жюри (id одного судьи)
+    report: defaultReport(),  // данные отчета главного судьи
+    payPrint: defaultPayPrint(),   // настройки печати ведомости (столбцы, фильтры, строки)
+    exam: defaultExam()       // данные раздела «Экзамен»
+  };
+}
+let S = defaultState();
+
+/* ---------- Утилиты ---------- */
+const $  = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rdown = x => Math.floor(x*10)/10;                 // округление вниз до 0,1 (как ROUNDDOWN в Excel)
+const fmt = n => (Math.round(n*100)/100).toLocaleString('ru-RU',{maximumFractionDigits:1});
+const getDays = j => {                                   // массив коэффициентов дней нужной длины
+  const n = +S.settings.days || 4, d = (j.days||[]).slice(0,n);
+  while(d.length<n) d.push(0); return d;
+};
+const working = () => S.judges.filter(j => j.role);      // судьи с должностью = рабочий состав
+function tariffFor(cat, role){                            // тариф по связке "категория + должность"
+  return S.tariffs.find(t => t.cat===cat && t.role===role) || null;
+}
+function calc(j){                                         // расчёт зарплаты судьи
+  const t = tariffFor(j.catMS, j.role);
+  const coef = +S.settings.coef || 1;                     // общий коэффициент соревнований
+  const rate = t ? Math.floor(+t.rate * coef) : 0;        // ставка с учётом коэффициента
+  const days = getDays(j);
+  let coefSum = days.reduce((a,b)=>a+(+b||0),0);
+  let examFree = 0;                                       // день на экзамен не оплачивается
+  if(j.exam){ examFree = Math.min(1, coefSum); coefSum = Math.max(0, coefSum-1); }
+  const daysMoney = rdown(rate * coefSum);
+  const extraDays = t ? +t.extraDays||0 : 0;              // доп. дни из тарифа (оплачиваются всегда)
+  const extraMoney = rdown(rate * extraDays);
+  const pct = j.pct ? 1.1 : 1;                            // ручная доплата 10% на всё
+  const total = rdown((daysMoney + extraMoney) * pct) + (+j.misc||0); // "Разное" добавляется сверху
+  return {t, rate, days, coefSum, examFree, daysMoney, extraDays, extraMoney, pct, total};
+}
+
+/* ---------- Сохранение ---------- */
+const LS_KEY = 'judgeBook_v1';
+let saveTimer = null;
+function persist(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>localStorage.setItem(LS_KEY, JSON.stringify(S)), 300);
+}
+function restore(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){ const s = JSON.parse(raw);
+      if(s && s.judges){
+        S = Object.assign(defaultState(), s);
+        if(!S.juries && S.jury){ S.juries = S.jury.length ? [{members:S.jury}] : []; delete S.jury; }
+        return true; } }
+  }catch(e){}
+  return false;
+}
+async function saveFile(){
+  const fname = 'Судейская книга ' + S.settings.comp + '.json';
+  // Chrome/Edge: системный диалог «Сохранить как» — выбор папки и перезапись без дублей
+  if(window.showSaveFilePicker){
+    try{
+      const handle = await window.showSaveFilePicker({
+        suggestedName: fname,
+        types: [{description:'Проект Судейской книги', accept:{'application/json':['.json']}}]
+      });
+      const w = await handle.createWritable();
+      await w.write(JSON.stringify(S, null, 1));
+      await w.close();
+      return;
+    }catch(e){
+      if(e && e.name === 'AbortError') return;   // пользователь отменил выбор
+      // прочие ошибки — падаем в обычное скачивание ниже
+    }
+  }
+  // Обычное скачивание (Firefox и др.)
+  saveBlob(new Blob([JSON.stringify(S,null,1)], {type:'application/json'}), fname, 'Проект Судейской книги');
+}
+function loadFile(ev){
+  const f = ev.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{ try{ S = JSON.parse(r.result); persist(); renderAll(); alert('Проект загружен.'); }
+    catch(e){ alert('Не удалось прочитать файл: '+e.message); } };
+  r.readAsText(f); ev.target.value='';
+}
+function newProject(){
+  if(!confirm('Создать новый проект? Текущие данные будут очищены (сначала сохраните файл, если нужно).')) return;
+  S = defaultState(); S.judges = []; S.juries = []; S.supervisor = null;
+  persist(); renderAll();
+}
+
+/* ---------- Вкладки ---------- */
+const TABS = [
+  ['judges','Судьи'], ['tatami','По татами'], ['payroll','Зарплатная ведомость'],
+  ['final','Итоговый список'], ['roster','Распределение'], ['tariffs','Тарифы'],
+  ['exam','Экзамен'], ['report','Отчет ГС']
+];
+let curTab = 'judges';
+function buildTabs(){
+  $('#tabs').innerHTML = TABS.map(([id,n]) =>
+    `<button class="${id===curTab?'on':''}" onclick="switchTab('${id}')">${n}</button>`).join('');
+}
+function switchTab(id){
+  curTab = id; buildTabs();
+  document.querySelectorAll('section.tab').forEach(s=>s.classList.remove('on'));
+  $('#tab-'+id).classList.add('on');
+  ({judges:renderJudges, tatami:renderTatami, payroll:renderPayroll,
+    final:renderFinal, roster:renderRoster, tariffs:renderTariffs,
+    exam:renderExam, report:renderReport})[id]();
+}
+function renderAll(){
+  $('#compName').textContent = S.settings.comp + ' — ' + S.settings.city;
+  buildTabs(); switchTab(curTab);
+}
+
+/* ---------- 1. СУДЬИ (мастер-лист) ---------- */
+let Flt = {q:'', region:'', cat:'', role:'', tatami:'', reserve:false};   // фильтры списка судей
+function updFlt(k, v){
+  Flt[k] = v; renderJudges();
+  if(k === 'q'){ const e = $('#fltQ'); e.focus(); e.setSelectionRange(e.value.length, e.value.length); }
+}
+function judgeMatch(j){
+  if(Flt.q && !j.fio.toLowerCase().includes(Flt.q.toLowerCase())) return false;
+  if(Flt.region && j.region !== Flt.region) return false;
+  if(Flt.cat && j.catMS !== Flt.cat) return false;
+  if(Flt.role && j.role !== Flt.role) return false;
+  if(Flt.tatami !== '' && String(+j.tatami || 0) !== Flt.tatami) return false;
+  if(Flt.reserve && j.role) return false;
+  return true;
+}
+function renderJudges(){
+  const w = working().length;
+  const list = S.judges.filter(judgeMatch);
+  const regions = [...new Set(S.judges.map(j=>j.region).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ru'));
+  const tatamis = [...new Set(S.judges.map(j=>+j.tatami||0))].sort((a,b)=>a-b);
+  const rows = list.map((j,i)=>`
+    <tr>
+      <td class="ctr">${i+1}</td>
+      <td><input value="${esc(j.fio)}" oninput="upd(${j.id},'fio',this.value)"></td>
+      <td><input value="${esc(j.region)}" oninput="upd(${j.id},'region',this.value)"></td>
+      <td><select onchange="upd(${j.id},'catMS',this.value);persist()">
+        ${sel(CATS, j.catMS)}</select></td>
+      <td><input value="${esc(j.kumite)}" oninput="upd(${j.id},'kumite',this.value)"></td>
+      <td><input value="${esc(j.kata)}" oninput="upd(${j.id},'kata',this.value)"></td>
+      <td><input type="number" min="0" class="num" value="${j.tatami||0}"
+           oninput="upd(${j.id},'tatami',this.value)"></td>
+      <td><select onchange="upd(${j.id},'role',this.value);persist()">
+        <option value="">— резерв —</option>${ROLES.map(r=>`<option ${r===j.role?'selected':''}>${r}</option>`).join('')}</select></td>
+      <td><select onchange="upd(${j.id},'exam',this.value);persist()">
+        <option value="">нет</option>${EXAMS.map(r=>`<option ${r===j.exam?'selected':''}>${r}</option>`).join('')}</select></td>
+      <td class="ctr"><button class="dng" title="Удалить" onclick="delJudge(${j.id})">✕</button></td>
+    </tr>`).join('');
+  $('#tab-judges').innerHTML = `
+    <div class="toolbar" style="gap:6px">
+      <button class="pri" onclick="openDlg('dlgPaste')">📋 Вставить списком</button>
+      <button onclick="addJudge()">＋ Судья</button>
+      <button onclick="openJury()">⚖️ Жюри</button>
+      <input id="fltQ" placeholder="🔍 Поиск по ФИО…" value="${esc(Flt.q)}" oninput="updFlt('q',this.value)" style="width:180px">
+      <select onchange="updFlt('region',this.value)" style="width:175px">
+        <option value="">Все регионы</option>${regions.map(r=>`<option ${r===Flt.region?'selected':''}>${esc(r)}</option>`).join('')}</select>
+      <select onchange="updFlt('cat',this.value)" style="width:115px">
+        <option value="">Категория</option>${sel(CATS, Flt.cat)}</select>
+      <select onchange="updFlt('role',this.value)" style="width:180px">
+        <option value="">Должность</option>${ROLES.map(r=>`<option ${r===Flt.role?'selected':''}>${r}</option>`).join('')}</select>
+      <select onchange="updFlt('tatami',this.value)" style="width:92px">
+        <option value="">Татами</option>${tatamis.map(t=>`<option value="${t}" ${String(t)===Flt.tatami?'selected':''}>${t||'—'}</option>`).join('')}</select>
+      <label style="display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);white-space:nowrap">
+        <input type="checkbox" ${Flt.reserve?'checked':''} onchange="updFlt('reserve',this.checked)" style="width:auto">только резерв</label>
+      <span class="info">Показано: ${list.length} из ${S.judges.length} · в составе: ${w}</span>
+    </div>
+    <div style="overflow:auto;max-height:66vh">
+    <table><thead><tr>
+      <th>№</th><th>ФИО</th><th>Регион</th><th>Кат. минспорт</th><th>Кумитэ</th><th>Ката</th>
+      <th>Татами</th><th>Должность</th><th>Экзамен</th><th></th></tr></thead>
+    <tbody>${rows || '<tr><td colspan="10" class="ctr hint">Никого не нашли — измените фильтры</td></tr>'}</tbody></table></div>
+    <p class="hint">«Резерв» — судьи без должности: в табеле, ведомости и итоговом списке не показываются.
+    Как только назначите должность — появятся везде.</p>`;
+}
+const sel = (arr,v)=>arr.map(o=>`<option ${o===v?'selected':''}>${o}</option>`).join('');
+function upd(id, field, val){
+  const j = S.judges.find(x=>x.id===id); if(!j) return;
+  j[field] = (field==='tatami') ? +val : val; persist();
+}
+function delJudge(id){
+  if(!confirm('Удалить судью из списка?')) return;
+  S.judges = S.judges.filter(j=>j.id!==id);
+  (S.juries||[]).forEach(jr => jr.members = (jr.members||[]).filter(x=>x!==id));
+  if(S.supervisor === id) S.supervisor = null;
+  persist(); renderJudges();
+}
+let nextId = 100000;
+function addJudge(){
+  if(demoBlock()) return;
+  S.judges.push({id:Date.now()+nextId++, fio:'', region:'', catMS:'С3К', kumite:'', kata:'',
+    tatami:0, role:'', exam:'', rate:'', days:[], pct:false, misc:0});
+  persist(); renderJudges();
+}
+
+/* --- Вставка списком --- */
+let parsedRows = [];
+const CAT_WORDS = ['СВК','СМК','ССВК','СС1К','СС2К','СС3К','С1К','С2К','С3К','ЮС','ЮСВ','1К','2К','3К'];
+function normCat(w){ return w ? w.toUpperCase().replace('СС','С') : ''; }
+function isCat(w){ return CAT_WORDS.map(x=>x.toUpperCase()).includes(String(w||'').toUpperCase()); }
+function splitRegionCity(s){
+  // "Кемеровская область, Новокузнецк" -> {region, city}
+  const parts = String(s||'').split(',').map(x=>x.trim()).filter(Boolean);
+  if(parts.length >= 2) return {region:parts[0], city:parts.slice(1).join(', ')};
+  return {region:s||'', city:''};
+}
+
+// Справочник регионов: [каноническое название, ключевое слово для распознавания]
+const REGIONS = [
+ ['Республика Башкортостан','башкортостан'], ['Республика Татарстан','татарстан'],
+ ['Республика Дагестан','дагестан'], ['Чеченская Республика','чечен'],
+ ['Республика Ингушетия','ингушет'], ['Республика Калмыкия','калмык'],
+ ['Республика Карелия','карел'], ['Республика Коми','коми'],
+ ['Республика Марий Эл','марий'], ['Республика Мордовия','мордов'],
+ ['Удмуртская Республика','удмурт'], ['Чувашская Республика','чуваш'],
+ ['Республика Саха (Якутия)','якут'], ['Республика Алтай','алтай'],
+ ['Республика Бурятия','бурят'], ['Республика Тыва','тыва'],
+ ['Республика Хакасия','хакас'], ['Республика Адыгея','адыге'],
+ ['Кабардино-Балкарская Республика','кабардин'], ['Карачаево-Черкесская Республика','карачаев'],
+ ['Республика Северная Осетия — Алания','осет'], ['Республика Крым','крым'],
+ ['Кемеровская область','кемеров'], ['Московская область','московск'],
+ ['Краснодарский край','краснодар'], ['Ставропольский край','ставрополь'],
+ ['Алтайский край','алтайск'], ['Забайкальский край','забайкаль'],
+ ['Камчатский край','камчат'], ['Красноярский край','краснояр'],
+ ['Пермский край','перм'], ['Приморский край','примор'],
+ ['Хабаровский край','хабаров'], ['Амурская область','амур'],
+ ['Иркутская область','иркут'], ['Магаданская область','магадан'],
+ ['Сахалинская область','сахалин'], ['Свердловская область','свердлов'],
+ ['Тюменская область','тюмен'], ['Курганская область','курган'],
+ ['Новосибирская область','новосибир'], ['Омская область','омск'],
+ ['Томская область','томск'], ['Челябинская область','челябин'],
+ ['Архангельская область','архангел'], ['Вологодская область','вологд'],
+ ['Калининградская область','калининград'], ['Костромская область','костром'],
+ ['Кировская область','киров'], ['Ленинградская область','ленинградск'],
+ ['Мурманская область','мурман'], ['Новгородская область','новгород'],
+ ['Псковская область','псков'], ['Белгородская область','белгород'],
+ ['Брянская область','брянск'], ['Владимирская область','владимир'],
+ ['Воронежская область','воронеж'], ['Ивановская область','иванов'],
+ ['Калужская область','калуж'], ['Курская область','курск'],
+ ['Липецкая область','липецк'], ['Орловская область','орлов'],
+ ['Рязанская область','рязан'], ['Смоленская область','смолен'],
+ ['Тамбовская область','тамбов'], ['Тверская область','твер'],
+ ['Тульская область','туль'], ['Ярославская область','ярославл'],
+ ['Волгоградская область','волгоград'], ['Астраханская область','астрахан'],
+ ['Самарская область','самар'], ['Саратовская область','саратов'],
+ ['Ульяновская область','ульянов'], ['Нижегородская область','нижегород'],
+ ['Пензенская область','пенз'], ['Оренбургская область','оренбург'],
+ ['Москва','москва'], ['Санкт-Петербург','петербург'],
+ ['ХМАО-Югра','ханты'], ['ХМАО-Югра','хмао'],
+ ['ЯНАО','ямало'], ['ЯНАО','янао'],
+ ['ЧАО','чукот'], ['НАО','ненец'], ['ЕАО','еврей'],
+];
+function matchRegion(raw){
+  const s = String(raw||'').toLowerCase().replace(/[.,]/g,' ').replace(/\s+/g,' ').trim();
+  if(!s) return '';
+  for(const [canon, key] of REGIONS){
+    if(s.includes(key)) return canon;
+  }
+  return String(raw||'').trim();   // не распознали — оставляем как есть, заполните вручную
+}
+
+function smartParseLine(line){
+  // --- Формат сайта (табуляция): №, ФИО, Регион, КатМС, Кумитэ, Ката, Татами, Должность ---
+  const cells = line.split('\t').map(s=>s.trim()).filter(s=>s!=='');
+  if(cells.length >= 5 && !isCat(cells[0])){
+    const r = {fio:'', region:'', catMS:'', kumite:'', kata:'', tatami:0, role:''};
+    let i = 0;
+    if(/^\d+$/.test(cells[0])) i = 1;                    // пропускаем №
+    r.fio = cells[i++] || '';
+    r.region = matchRegion(cells[i++] || '');
+    const cats = [];
+    for(; i < cells.length; i++){
+      const x = cells[i];
+      if(isCat(x) && cats.length < 3) cats.push(normCat(x));   // категории подряд: МС, Кумитэ, Ката
+      else if(/^\d+$/.test(x)) r.tatami = +x;                  // число = татами
+      else if(ROLE_IDX[x] !== undefined) r.role = x;           // известная должность
+    }
+    r.catMS = cats[0]||''; r.kumite = cats[1]||''; r.kata = cats[2]||'';
+    if(!r.fio) return null;
+    return r;
+  }
+  // --- Свободный формат (пробелы, без табуляции) ---
+  let s = line.replace(/\t/g,'  ');
+  s = s.replace(/(^|\s)\d+(\s|$)/g, ' ').replace(/\s{2,}/g,' ').trim();
+  if(!s) return null;
+  if(isCat(s)) return null;
+  const words = s.split(/\s+/);
+  let catCells = [];
+  while(words.length && isCat(words[words.length-1])) catCells.unshift(normCat(words.pop()));
+  if(words.length < 3) return null;
+  const fio = words.slice(0,3).join(' ');
+  const rest = words.slice(3).join(' ');
+  const r = {fio, region:'', catMS:catCells[0]||'', kumite:catCells[1]||'', kata:catCells[2]||'', tatami:0, role:''};
+  r.region = matchRegion(rest.split(',')[0]);
+  return r;
+}
+function parsePaste(){
+  const txt = $('#pasteText').value.trim(); if(!txt){ alert('Вставьте список.'); return; }
+  const exist = new Set(S.judges.map(j=>j.fio.trim().toLowerCase()));
+  parsedRows = []; let skipped = 0;
+  txt.split(/\r?\n/).forEach(line=>{
+    if(!line.trim()) return;
+    const r = smartParseLine(line);
+    if(!r){ skipped++; return; }
+    if(r.fio && exist.has(r.fio.toLowerCase())){ skipped++; return; }   // дубликат
+    parsedRows.push(r);
+  });
+  if(!parsedRows.length){
+    $('#pastePreview').innerHTML = '<p class="miss">Никого не нашёл — проверьте, что список скопирован целиком (ФИО, регион, категории).</p>';
+    $('#pasteAddBtn').disabled = true; return;
+  }
+  $('#pastePreview').innerHTML = '<table><thead><tr><th>ФИО</th><th>Регион</th><th>Кат. минспорт</th><th>Кумитэ</th><th>Ката</th><th>Татами</th><th>Должность</th></tr></thead><tbody>' +
+    parsedRows.map(r=>`<tr><td>${esc(r.fio)}</td><td>${esc(r.region)}</td><td class="ctr">${esc(r.catMS)}</td><td class="ctr">${esc(r.kumite)}</td><td class="ctr">${esc(r.kata)}</td><td class="ctr">${r.tatami||''}</td><td>${esc(r.role)}</td></tr>`).join('') +
+    '</tbody></table><p class="hint">Найдено: '+parsedRows.length+(skipped?' · пропущено (дубликаты/пустые): '+skipped:'')+' — проверьте колонки перед добавлением.</p>';
+  $('#pasteAddBtn').disabled = false;
+}
+function addParsed(){
+  if(DEMO){
+    const room = DEMO_LIMIT - S.judges.length;
+    if(room <= 0){ demoBlock(); return; }
+    if(parsedRows.length > room){
+      parsedRows = parsedRows.slice(0, room);
+      alert('Демо-версия: добавлено только ' + room + ' (лимит ' + DEMO_LIMIT + ' судей).\nПолная версия: t.me/matveich877');
+    }
+  }
+  parsedRows.forEach(r=>S.judges.push({id:Date.now()+nextId++, tatami:0, role:'', exam:'',
+    rate:'', days:[], pct:false, misc:0, ...r}));
+  console.log('Добавлено судей:', parsedRows.length);
+  persist(); closeDlg('dlgPaste'); renderJudges();
+}
+
+/* ---------- 2. ПО ТАТАМИ (табелирование) ---------- */
+function renderTatami(){
+  const n = +S.settings.days || 4;
+  const ws = working();
+  // группировка: руководство (татами 0) первым, затем татами по возрастанию
+  const groups = {};
+  ws.forEach(j=>{ const t = +j.tatami || 0; (groups[t] = groups[t]||[]).push(j); });
+  const keys = Object.keys(groups).sort((a,b)=>a==0?-1:(b==0?1:a-b));
+  let dayTh = ''; for(let d=1; d<=n; d++) dayTh += `<th class="ctr">${d} день</th>`;
+  let html = `<div class="toolbar"><button class="pri" onclick="printAllTatami()">🖨 Печать всех татами</button>
+    <span class="info">Коэффициенты: 1 — полный день · 0,5 — полдня · 1,2 — переработка 20% · 0 — не работал.
+    Если судья сдаёт экзамен, один день не оплачивается (учитывается в ведомости).</span></div>`;
+  if(!ws.length) html += '<div class="card hint">Никому ещё не назначены должности — сделайте это на вкладке «Судьи».</div>';
+  keys.forEach(t=>{
+    const list = groups[t].sort((a,b)=> (ROLE_IDX[a.role]-ROLE_IDX[b.role]) || a.fio.localeCompare(b.fio,'ru'));
+    html += `<div class="tatami-title" style="overflow:hidden">${t==0 ? '🏛 Руководство / без татами' : 'Татами '+t} · ${list.length} чел.
+      <button style="float:right;padding:2px 10px" onclick="printTatami(${+t})">🖨 Печать / PDF</button></div><table>
+      <thead><tr><th>Должность</th><th>ФИО</th><th>Регион</th><th>Кумитэ</th><th>Ката</th><th>Минспорт</th>${dayTh}<th>Экзамен</th><th>Оценка</th></tr></thead><tbody>`;
+    list.forEach(j=>{
+      const days = getDays(j);
+      let dayTd = '';
+      days.forEach((v,di)=>{ dayTd += `<td><input type="number" step="0.1" min="0" class="num" value="${v}"
+        onfocus="if(!this.value){this.value=1;updDay(${j.id},${di},1)}"
+        oninput="updDay(${j.id},${di},this.value)"></td>`; });
+      html += `<tr>
+        <td>${esc(j.role)}</td><td><b>${esc(j.fio)}</b></td><td>${esc(j.region)}</td>
+        <td class="ctr">${esc(j.kumite)||'—'}</td><td class="ctr">${esc(j.kata)||'—'}</td><td class="ctr">${esc(j.catMS)||'—'}</td>
+        ${dayTd}
+        <td class="ctr">${j.exam ? '<span class="badge warn">экз. '+esc(j.exam)+'</span>' : '—'}</td>
+        <td><input type="number" min="1" max="5" class="num" style="width:64px" value="${esc(j.rate)}"
+             placeholder="—" oninput="upd(${j.id},'rate',this.value)"></td></tr>`;
+    });
+    html += '</tbody></table>';
+  });
+  $('#tab-tatami').innerHTML = html;
+}
+// Печать ВСЕХ татами: каждый блок — отдельный лист
+function printAllTatami(){
+  const gs = rosterGroups(); const s = S.settings; const n = +s.days || 4;
+  let dayTh = ''; for(let d=1; d<=n; d++) dayTh += `<th style="width:30px">${d}</th>`;
+  let dayTd = ''; for(let d=0; d<n; d++) dayTd += '<td></td>';
+  const blocks = gs.map(g => `<div style="page-break-after:always">
+    <p class="pa-title">${g.t===0?'Руководство судейской коллегии':'Татами '+g.t}</p>
+    <table class="pa-table"><thead><tr><th style="width:28px">№</th><th style="width:135px">Должность</th>
+    <th class="pa-fio">Ф.И.О.</th><th>Регион</th><th style="width:52px">Кумитэ</th><th style="width:52px">Ката</th>
+    ${dayTh}<th style="width:72px">Экзамен</th><th style="width:48px">Оценка</th></tr></thead><tbody>
+    ${g.list.map((j,i)=>`<tr><td class="ctr">${i+1}</td><td>${esc(j.role)}</td><td class="pa-fio">${esc(j.fio)}</td>
+    <td>${esc(j.region)}</td><td class="ctr">${esc(j.kumite)||''}</td><td class="ctr">${esc(j.kata)||''}</td>
+    ${dayTd}<td class="ctr">${j.exam ? esc(j.exam) : ''}</td><td></td></tr>`).join('')}
+    </tbody></table></div>`).join('');
+  printHTML(`<div class="pa-doc"><p class="pa-center"><b>${esc(s.comp)}</b> — ${esc(s.city)}, ${esc(s.dates)}</p>
+    ${blocks}</div>`);
+}
+
+function updDay(id, di, val){
+  const j = S.judges.find(x=>x.id===id); if(!j) return;
+  const n = +S.settings.days || 4;
+  j.days = getDays(j); j.days[di] = +val || 0; persist();
+}
+
+// Печать одного татами отдельным листом (дни и оценка заполняются вручную на площадке)
+function printTatami(t){
+  const g = rosterGroups().find(x=>x.t===+t); if(!g) return;
+  const s = S.settings; const n = +S.settings.days || 4;
+  let dayTh = ''; for(let d=1; d<=n; d++) dayTh += `<th style="width:30px">${d}</th>`;
+  let dayTd = ''; for(let d=0; d<n; d++) dayTd += '<td></td>';
+  const rows = g.list.map((j,i)=>`<tr>
+    <td class="ctr">${i+1}</td><td>${esc(j.role)}</td><td class="pa-fio">${esc(j.fio)}</td>
+    <td>${esc(j.region)}</td><td class="ctr">${esc(j.kumite)||''}</td><td class="ctr">${esc(j.kata)||''}</td>
+    ${dayTd}<td class="ctr">${j.exam ? esc(j.exam) : ''}</td><td></td></tr>`).join('');
+  printHTML(`<div class="pa-doc"><p class="pa-center"><b>${esc(s.comp)}</b> — ${esc(s.city)}, ${esc(s.dates)}</p>
+    <p class="pa-title">${g.t===0?'Руководство судейской коллегии':'Татами '+g.t}</p>
+    <p style="font-size:10pt;margin:2px 0">Дни работы и оценки проставляются вручную на площадке</p>
+    <table class="pa-table"><thead><tr><th style="width:28px">№</th><th style="width:135px">Должность</th>
+    <th class="pa-fio">Ф.И.О.</th><th>Регион</th><th style="width:52px">Кумитэ</th><th style="width:52px">Ката</th>
+    ${dayTh}<th style="width:72px">Экзамен</th><th style="width:48px">Оценка</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`);
+}
+
+/* ---------- 3. ЗАРПЛАТНАЯ ВЕДОМОСТЬ ---------- */
+let payFilter = 'all';   // all | gsk | judges
+// настройки печати ведомости: фильтры и состав столбцов (сохраняются в проекте)
+function updPP(k, v){
+  if(!S.payPrint) S.payPrint = defaultPayPrint();
+  S.payPrint[k] = v; persist(); renderPayroll();
+}
+function updPPCat(c, v){
+  const pp = S.payPrint || (S.payPrint = defaultPayPrint());
+  updPP('cats', {...pp.cats, [c]: v});
+}
+function togglePRow(id, v){
+  const pp = S.payPrint || (S.payPrint = defaultPayPrint());
+  pp.rows[id] = v; persist(); renderPayroll();
+}
+function setPRows(v){
+  const pp = S.payPrint || (S.payPrint = defaultPayPrint());
+  pp.rows = Object.fromEntries(working().map(j => [j.id, v]));
+  persist(); renderPayroll();
+}
+function renderPayroll(){
+  const n = +S.settings.days || 4;
+  const pp = S.payPrint || defaultPayPrint();
+  const list = working().filter(j => payFilter==='all' ? true : payFilter==='gsk' ? isGSK(j.role) : !isGSK(j.role))
+    .filter(j => !pp.hideZero || calc(j).total > 0)
+    .filter(j => pp.cats[j.catMS] !== false)
+    .sort((a,b)=> (ROLE_IDX[a.role]-ROLE_IDX[b.role]) || a.fio.localeCompare(b.fio,'ru'));
+  let dayTh = ''; for(let d=1; d<=n; d++) dayTh += `<th class="ctr">${d} день</th>`;
+  let sum = 0, noTariff = 0;
+  const rows = list.map(j=>{
+    const c = calc(j); sum += c.total;
+    if(!c.t) noTariff++;
+    let dayTd = ''; c.days.forEach(v=>{ dayTd += `<td class="num">${v||''}</td>`; });
+    return `<tr>
+      <td class="ctr"><input type="checkbox" ${pp.rows[j.id]!==false?'checked':''} title="Печатать эту строку"
+        onchange="togglePRow(${j.id},this.checked)" style="width:auto"></td>
+      <td><b>${esc(j.fio)}</b></td><td>${esc(j.region)}</td><td class="ctr">${esc(j.catMS)}</td><td>${esc(j.role)}</td>
+      <td class="num">${c.t ? fmt(c.rate) : '<span class="miss" title="Связки «'+esc(j.catMS)+' — '+esc(j.role)+'» нет в тарифах">⚠ нет тарифа</span>'}</td>
+      ${dayTd}
+      <td class="num">${c.coefSum ? fmt(c.coefSum) : ''}${j.exam && c.examFree ? '<span class="badge warn" title="День на экзамен не оплачивается">−'+fmt(c.examFree)+' экз.</span>' : ''}</td>
+      <td class="num">${fmt(c.daysMoney)}</td>
+      <td class="ctr">${c.extraDays || ''}</td>
+      <td class="num">${fmt(c.extraMoney)}</td>
+      <td class="ctr"><input type="checkbox" ${j.pct?'checked':''} onchange="upd(${j.id},'pct',this.checked);persist();renderPayroll()" title="Доплата 10%"></td>
+      <td><input type="number" step="100" class="num" value="${j.misc||''}" placeholder="0"
+           oninput="upd(${j.id},'misc',this.value)"></td>
+      <td class="num"><b>${fmt(c.total)}</b></td>
+      <td style="min-width:90px"></td></tr>`;
+  }).join('');
+  const fil = f=>`<button class="${payFilter===f?'pri':''}" onclick="payFilter='${f}';renderPayroll()">`+
+    ({all:'Все',gsk:'ГСК (руководство)',judges:'Судьи'})[f]+'</button>';
+  $('#tab-payroll').innerHTML = `
+    <div class="toolbar">${fil('all')}${fil('gsk')}${fil('judges')}
+      <button onclick="printPayroll()">🖨 Печать / PDF</button>
+      <button onclick="wordPayroll()">⬇ Word</button>
+      <button onclick="csvPayroll()">⬇ CSV</button>
+      <button onclick="setPRows(true)" title="Отметить все строки для печати">✔ все строки</button>
+      <button onclick="setPRows(false)" title="Снять все строки с печати">✘ никто</button>
+      ${noTariff ? `<span class="miss">⚠ У ${noTariff} судей нет тарифа — внесите связку на вкладке «Тарифы»</span>` : ''}
+      <span class="info">Итого: <b>${fmt(sum)} ₽</b></span></div>
+    <div class="card" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:10px 14px">
+      <label style="display:flex;gap:5px;align-items:center;font-size:13px;white-space:nowrap">
+        <input type="checkbox" ${pp.hideZero?'checked':''} onchange="updPP('hideZero',this.checked)" style="width:auto">
+        скрыть судей с нулевой ЗП</label>
+      <span style="color:var(--muted);font-size:13px">Категории:</span>
+      ${CATS.map(c=>`<label style="display:flex;gap:4px;align-items:center;font-size:13px;white-space:nowrap">
+        <input type="checkbox" ${pp.cats[c]!==false?'checked':''} onchange="updPPCat('${c}',this.checked)" style="width:auto">${c}</label>`).join('')}
+      <span style="color:var(--muted);font-size:13px">Столбцы при печати:</span>
+      ${PAY_COLS.map(([k,l])=>`<label style="display:flex;gap:4px;align-items:center;font-size:13px;white-space:nowrap" title="${l==='Дни 1–N' ? 'Все дневные колонки одной галочкой' : ''}">
+        <input type="checkbox" ${pp.cols[k]!==false?'checked':''} onchange="updPP('cols',{...pp.cols,${k}:this.checked})" style="width:auto">${l}</label>`).join('')}
+    </div>
+    <div style="overflow:auto;max-height:70vh"><table><thead><tr>
+      <th style="width:30px" title="Галочки строк запоминаются: итоговая сумма печатается по отмеченным">✔</th>
+      <th>Ф.И.О.</th><th>Регион</th><th>Категория</th><th>Должность</th><th>Ставка, ₽</th>
+      ${dayTh}<th>Σ коэф (с уч. экз.)</th><th>За дни, ₽</th><th>Доп. дни, шт</th><th>Доп. дни, ₽</th>
+      <th>Допл. 10%</th><th>Разное, ₽</th><th>ИТОГО, ₽</th><th>Подпись</th></tr></thead>
+    <tbody>${rows || '<tr><td colspan="15" class="ctr hint">Нет данных</td></tr>'}
+    <tr class="total-row"><td colspan="${12+n}">ИТОГО (${list.length} чел.)</td><td class="num">${fmt(sum)} ₽</td><td></td></tr>
+    </tbody></table></div>
+    <p class="hint">Ставка — тариф по связке «категория мин.спорта + должность» (вкладка «Тарифы»).
+    Деньги за дни = ставка × Σ коэффициентов, округление вниз до десятых (как в Excel).
+    Доп. дни из тарифа оплачиваются всегда. «Допл. 10%» умножает всё на 1,1. «Разное» прибавляется к итогу.</p>`;
+}
+function csvPayroll(){
+  const n = +S.settings.days||4;
+  let out = '\uFEFFФИО;Регион;Категория;Должность;Ставка;' +
+    Array.from({length:n},(_,i)=>(i+1)+' день').join(';') +
+    ';Σ коэф;За дни;Доп.дни шт;Доп.дни ₽;Допл.10%;Разное;ИТОГО\n';
+  working().forEach(j=>{ const c = calc(j);
+    out += [j.fio, j.region, j.catMS, j.role, c.rate, ...c.days, c.coefSum, c.daysMoney,
+      c.extraDays, c.extraMoney, j.pct?'1.1':'1', j.misc||0, c.total].join(';') + '\n'; });
+  saveBlob(new Blob([out], {type:'text/csv'}), 'Зарплатная ведомость.csv', 'Таблица CSV');
+}
+
+/* ---------- 4. ИТОГОВЫЙ СПИСОК СУДЕЙ ---------- */
+// Отображение для отчетов в министерство: в программе остаются «Старший судья», «С1К» и т.д.,
+// а в итоговом списке (экран, печать, Word) категории и должности выводятся в новой форме
+const CAT_EXPORT = {'СВК':'ССВК','С1К':'1К','С2К':'2К','С3К':'3К'};                 // категории
+const ROLE_EXPORT = {'Старший судья':'Зам. главного судьи','Зам. старшего судьи':'Арбитр'}; // должности
+const catExp = c => CAT_EXPORT[c] || c || '';
+const roleExp = r => ROLE_EXPORT[r] || r || '';
+function renderFinal(){
+  const list = finalSortedList();
+  $('#tab-final').innerHTML = `
+    <div class="toolbar">
+      <button class="pri" onclick="printFinal()">🖨 Печать / PDF</button>
+      <button onclick="wordFinal()">⬇ Word</button>
+      <button onclick="openJury()">⚖️ Аппеляционные жюри (${S.juries.length})</button>
+      <span class="info">В списке: ${list.length} судей</span></div>
+    <div class="card" id="finalPreview">${finalDocHTML(list)}</div>`;
+}
+function finalSortedList(){
+  // топ-4 должности (ГС, ГСек, Зам.ГС, Зам.ГСек — с учетом переименования) фиксированно,
+  // все остальные (арбитры, рефери, судьи-секретари и т.д.) — по алфавиту ФИО
+  const rank = j => { const ri = ROLE_IDX[roleExp(j.role)]; return ri < 4 ? ri : 4; };
+  return working().slice().sort((a,b)=> (rank(a)-rank(b)) || a.fio.localeCompare(b.fio,'ru'));
+}
+function wordFinal(){ wordDoc(finalDocHTML(finalSortedList()), 'Итоговый список судей.doc'); }
+function finalDocHTML(list){
+  const s = S.settings;
+  const tr = list.map((j,i)=>`<tr><td class="ctr">${i+1}</td><td>${esc(j.fio)}</td><td>${esc(j.region)}</td>
+    <td class="ctr">${esc(catExp(j.catMS))}</td><td>${esc(roleExp(j.role))}</td>
+    <td class="ctr">${esc(j.rate)||''}</td></tr>`).join('');
+  return `<div class="pa-doc">
+    <p class="pa-center">Министерство спорта Российской Федерации</p>
+    <p class="pa-center">Федерация каратэ России</p>
+    <p class="pa-title" style="margin-top:14px">Список судей</p>
+    <p class="pa-center"><b>${esc(s.comp)}</b></p>
+    ${s.compFull?`<p class="pa-center">${esc(s.compFull)}</p>`:''}
+    <p class="pa-center">${esc(s.city)} ${esc(s.dates)}</p>
+    <table class="pa-table"><thead><tr>
+      <th style="width:36px">№</th><th>Фамилия И.О.</th><th>Регион</th>
+      <th style="width:70px">Судейская категория</th><th>Судейская должность</th>
+      <th style="width:56px">Оценка</th></tr></thead><tbody>${tr}</tbody></table>
+    <div style="margin-top:26px;font-size:12pt">
+      <div class="pa-sign"><span>Главный судья соревнований</span>
+      <span>${esc(s.chiefJudge)} (${esc(catExp(s.chiefJudgeCat))})</span></div>
+      <p>&nbsp;</p><p>&nbsp;</p>
+      <div class="pa-sign"><span>Главный секретарь соревнований</span>
+      <span>${esc(s.chiefSec)} (${esc(catExp(s.chiefSecCat))})</span></div>
+    </div>
+  </div>`;
+}
+
+/* ---------- РАСПРЕДЕЛЕНИЕ (раскладка по татами для развески) ---------- */
+function rosterGroups(){
+  const ws = working(); const groups = {};
+  ws.forEach(j=>{ const t=+j.tatami||0; (groups[t]=groups[t]||[]).push(j); });
+  return Object.keys(groups).sort((a,b)=>a==0?-1:(b==0?1:a-b))
+    .map(t=>({t:+t, list:groups[t].sort((a,b)=>(ROLE_IDX[a.role]-ROLE_IDX[b.role])||a.fio.localeCompare(b.fio,'ru'))}));
+}
+
+function renderRoster(){
+  const gs = rosterGroups();
+  
+  // Функция для отрисовки стандартного блока (руководство или татами)
+  const block = g => `<div class="card" style="margin:0;padding:10px">
+    <div class="tatami-title" style="margin:0 0 6px;border-radius:4px;overflow:hidden">${g.t===0?'🏛 Руководство':'Татами '+g.t}
+      <button style="float:right;padding:2px 10px" onclick="printTatami(${g.t})">🖨 Печать / PDF</button></div>
+    <table><thead><tr><th style="width:34px">№</th><th>Должность</th><th>ФИО</th><th>Регион</th><th style="width:64px">Кумитэ</th><th style="width:64px">Ката</th></tr></thead>
+    <tbody>${g.list.map((j,i)=>`<tr><td class="ctr">${i+1}</td><td>${esc(j.role)}</td><td><b>${esc(j.fio)}</b></td>
+      <td>${esc(j.region)}</td><td class="ctr">${esc(j.kumite)||'—'}</td><td class="ctr">${esc(j.kata)||'—'}</td></tr>`).join('')}</tbody></table></div>`;
+
+  // НОВАЯ ЛОГИКА: Формируем блок апелляционного жюри для экрана
+  let juryHTML = '';
+  if (S.juries && S.juries.length > 0) {
+    const activeJuries = S.juries.filter(jr => (jr.members || []).length > 0);
+    if (activeJuries.length > 0) {
+      juryHTML = activeJuries.map((jr, idx) => {
+        const members = jr.members.map(id => S.judges.find(j => j.id === id)).filter(Boolean)
+          .sort((a, b) => (ROLE_IDX[a.role] - ROLE_IDX[b.role]) || a.fio.localeCompare(b.fio, 'ru'));
+
+        return `<div class="card" style="margin:0;padding:10px; border: 2px solid var(--accent);">
+          <div class="tatami-title" style="margin:0 0 6px;border-radius:4px;overflow:hidden; background: var(--warn); color: #fff;">⚖️ Апелляционное жюри №${idx + 1}</div>
+          <table><thead><tr><th style="width:34px">№</th><th>Должность</th><th>ФИО</th><th>Регион</th><th style="width:64px">Кумитэ</th><th style="width:64px">Ката</th></tr></thead>
+          <tbody>${members.map((j, i) => `<tr><td class="ctr">${i + 1}</td><td>${esc(j.role)}</td><td><b>${esc(j.fio)}</b></td>
+            <td>${esc(j.region)}</td><td class="ctr">${esc(j.kumite) || '—'}</td><td class="ctr">${esc(j.kata) || '—'}</td></tr>`).join('')}</tbody></table></div>`;
+      }).join('');
+
+      // Добавляем супервайзера, если он выбран
+      const sup = S.judges.find(j => j.id === S.supervisor);
+      if (sup) {
+        juryHTML += `<div class="card" style="margin:0;padding:10px; background: var(--accent2); border: 1px solid var(--accent);">
+          <b>👤 Супервайзер апелляционного жюри:</b> ${esc(sup.fio)} (${esc(sup.catMS)})
+        </div>`;
+      }
+    }
+  }
+
+  // Разделяем руководство и татами, чтобы вставить жюри между ними
+  const head = gs.find(g => g.t === 0);
+  const tats = gs.filter(g => g.t !== 0);
+
+  let html = `<div class="toolbar">
+      <button class="pri" onclick="printRoster()">🖨 Печать / PDF (всё)</button>
+      <button onclick="wordRoster()">⬇ Word</button>
+      <button onclick="openAuto()" title="Автоматическая раскладка судей по татами с балансом категорий и регионов">🎲 Автораспределение</button>
+      <span class="info">${gs.length} блок(ов) · ${working().length} судей</span></div>
+    <div class="roster-grid">`;
+
+  // 1. Сначала выводим Руководство
+  if (head) {
+    html += block(head);
+  }
+
+  // 2. Сразу под ним выводим Жюри (и супервайзера)
+  html += juryHTML;
+
+  // 3. Затем выводим все Татами
+  tats.forEach(t => {
+    html += block(t);
+  });
+
+  html += `</div>
+    <p class="hint">Аналог листа «Распределение» из Excel: раскладка для развески. Руководство и жюри выводятся первыми блоками, далее татами по порядку.</p>`;
+
+  $('#tab-roster').innerHTML = html;
+}
+
+function rosterDocHTML(){
+  const gs = rosterGroups(); const s = S.settings;
+  const head = gs.find(g=>g.t===0);                       // руководство
+  const tats = gs.filter(g=>g.t!==0);
+  // таблица одного татами / руководства
+  const gTable = g => `<p class="pa-title" style="font-size:12pt;text-align:left;margin-top:6px">${g.t===0?'Руководство судейской коллегии':'Татами '+g.t}</p>
+    <table class="pa-table"><thead><tr><th style="width:32px">№</th><th style="width:150px">Должность</th><th class="pa-fio">Ф.И.О.</th><th>Регион</th><th style="width:56px">Кумитэ</th><th style="width:56px">Ката</th></tr></thead><tbody>
+    ${g.list.map((j,i)=>`<tr><td class="ctr">${i+1}</td><td>${esc(j.role)}</td><td class="pa-fio">${esc(j.fio)}</td><td>${esc(j.region)}</td><td class="ctr">${esc(j.kumite)||''}</td><td class="ctr">${esc(j.kata)||''}</td></tr>`).join('')}
+    </tbody></table>`;
+  // блок аппеляционных жюри + супервайзера (1-я страница, под руководством)
+  const juryBlock = (S.juries||[]).filter(jr=>(jr.members||[]).length).map((jr,idx)=>{
+    const members = jr.members.map(id=>S.judges.find(j=>j.id===id)).filter(Boolean)
+      .sort((a,b)=> (ROLE_IDX[a.role]-ROLE_IDX[b.role]) || a.fio.localeCompare(b.fio,'ru'));
+    return `<p class="pa-title" style="font-size:12pt;text-align:left;margin-top:10px">Аппеляционное жюри №${idx+1}</p>
+    <table class="pa-table"><thead><tr><th style="width:32px">№</th><th style="width:150px">Должность</th><th class="pa-fio">Ф.И.О.</th><th>Регион</th><th style="width:56px">Кумитэ</th><th style="width:56px">Ката</th></tr></thead><tbody>
+    ${members.map((j,i)=>`<tr><td class="ctr">${i+1}</td><td>${esc(j.role)}</td><td class="pa-fio">${esc(j.fio)}</td><td>${esc(j.region)}</td><td class="ctr">${esc(j.kumite)||''}</td><td class="ctr">${esc(j.kata)||''}</td></tr>`).join('')}
+    </tbody></table>`; }).join('');
+  const sup = S.judges.find(j=>j.id===S.supervisor);
+  const supHTML = sup ? `<p style="margin-top:12px"><b>Супервайзер аппеляционного жюри:</b> ${esc(sup.fio)} (${esc(sup.catMS)})</p>` : '';
+  // страница 1: название турнира + руководство + жюри
+  const page1 = `<div style="page-break-after:always">
+    <p class="pa-center"><b>${esc(s.comp)}</b></p>
+    ${s.compFull?`<p class="pa-center">${esc(s.compFull)}</p>`:''}
+    <p class="pa-center">${esc(s.city)} ${esc(s.dates)}</p>
+    <p class="pa-title">Распределение судейской коллегии по татами</p>
+    ${head ? gTable(head) : '<p class="pa-center">(руководство не назначено)</p>'}
+    ${juryBlock}${supHTML}</div>`;
+  // страницы по 2 татами
+  const pages = [];
+  for(let i=0; i<tats.length; i+=2){
+    const pair = tats.slice(i,i+2);
+    const cells = pair.map(g => `<td style="width:50%;border:none;padding:0 8px 0 0;vertical-align:top">${gTable(g)}</td>`).join('');
+    pages.push(`<div style="page-break-after:always"><table style="width:100%;border-collapse:collapse"><tr>${cells}</tr></table></div>`);
+  }
+  return `<div class="pa-doc">${page1}${pages.join('')}</div>`;
+}
+function printRoster(){ printHTML(rosterDocHTML()); }
+function wordRoster(){ wordDoc(rosterDocHTML(), 'Распределение по татами.doc'); }
+
+
+/* ---------- 6. ОТЧЕТ ГЛАВНОГО СУДЬИ ---------- */
+function defaultReport(){
+  return {
+    compName: '',              // если пусто — берется settings.comp
+    ekpYear: 2026, ekpNo: '',
+    datesText: '',             // "08-15.09.2026 года"
+    venueCity: '', venueAddress: '',
+    orgBody: 'Министерство спорта Российской Федерации',
+    orgDirect: 'ОСОО «Федерация каратэ России» и главная судейская коллегия',
+    chiefJudgeRegion: '', chiefSecRegion: '',   // регионы ГС и ГСек для отчета
+    tatamiCount: 4, volunteers: 40,
+    participants: 0,
+    protests: [],              // [{note, decision: 'удовлетворен'|'отклонен'}]
+    sikaku: [],                // [{name, region, term}]
+    injuries: true,            // упомянуть травмы из отчета главного врача
+    extra: ''                  // свободный абзац в конце характеристики
+  };
+}
+const plural = (n, f) => { n = Math.abs(+n || 0) % 100; const d = n % 10;
+  return f[(n > 10 && n < 20) ? 2 : (d > 1 && d < 5) ? 1 : d === 1 ? 0 : 2]; };
+const catWord = c => ({'СВК':'всероссийской','С1К':'первой','С2К':'второй',
+  'С3К':'третьей','ЮС':'юношеской'}[c] || c || '');
+
+function updR(k, v){
+  if(!S.report) S.report = defaultReport();
+  S.report[k] = v; persist(); renderReportPreview();
+}
+// старые проекты: protests был числом -> превращаем в список
+function migrateProtests(){
+  if(!S.report) S.report = defaultReport();
+  if(typeof S.report.protests === 'number'){
+    S.report.protests = Array.from({length: S.report.protests},
+      () => ({note:'', decision:'отклонен'}));
+    persist();
+  }
+  if(!Array.isArray(S.report.protests)) S.report.protests = [];
+}
+function updProt(i, k, v){ S.report.protests[i][k] = v; persist(); renderReportPreview(); }
+function addProt(){ S.report.protests.push({note:'', decision:'отклонен'}); persist(); renderReport(); }
+function delProt(i){ S.report.protests.splice(i,1); persist(); renderReport(); }
+function updSik(i, k, v){ S.report.sikaku[i][k] = v; persist(); renderReportPreview(); }
+function addSik(){
+  S.report.sikaku.push({name:'', region:'', term:'на данные соревнования'});
+  persist(); renderReport();
+}
+function delSik(i){ S.report.sikaku.splice(i,1); persist(); renderReport(); }
+
+function renderReport(){
+  if(!S.report) S.report = defaultReport();
+  const r = S.report, s = S.settings;
+  migrateProtests();
+  const fld = (k,label,ph='') => `<div><label>${label}</label>
+    <input value="${esc(r[k])}" placeholder="${esc(ph)}" oninput="updR('${k}',this.value)"></div>`;
+  const num = (k,label) => `<div><label>${label}</label>
+    <input type="number" min="0" value="${r[k]}" oninput="updR('${k}',+this.value||0)"></div>`;
+  const protRows = (r.protests||[]).map((p,i) => `<tr>
+    <td class="ctr">${i+1}</td>
+    <td><input value="${esc(p.note)}" placeholder="Например: тренер сборной, кумитэ, 1/2 финала" oninput="updProt(${i},'note',this.value)"></td>
+    <td><select onchange="updProt(${i},'decision',this.value)">
+      <option value="отклонен" ${p.decision==='отклонен'?'selected':''}>отклонен</option>
+      <option value="удовлетворен" ${p.decision==='удовлетворен'?'selected':''}>удовлетворен</option></select></td>
+    <td class="ctr"><button class="dng" title="Удалить" onclick="delProt(${i})">✕</button></td></tr>`).join('');
+  const sikRows = (r.sikaku||[]).map((p,i) => `<tr>
+    <td class="ctr">${i+1}</td>
+    <td><input value="${esc(p.name)}" placeholder="ФИО спортсмена" oninput="updSik(${i},'name',this.value)"></td>
+    <td><input value="${esc(p.region)}" placeholder="Регион / город" oninput="updSik(${i},'region',this.value)"></td>
+    <td><select onchange="updSik(${i},'term',this.value)">
+      ${['на данные соревнования','на один год','пожизненно'].map(t=>
+        `<option ${t===p.term?'selected':''}>${t}</option>`).join('')}</select></td>
+    <td class="ctr"><button class="dng" title="Удалить" onclick="delSik(${i})">✕</button></td></tr>`).join('');
+  $('#tab-report').innerHTML = `
+    <div class="toolbar">
+      <button class="pri" onclick="printReport()">🖨 Печать / PDF</button>
+      <button onclick="wordReport()">⬇ Word</button>
+      <span class="info">ФИО и категории ГС / ГСек подтягиваются из «Настроек»; регионы укажите здесь</span></div>
+    <div class="grid2" style="align-items:start">
+      <div class="card"><h3>Данные соревнования</h3>
+        ${fld('compName','Наименование соревнований (пусто = из настроек)', s.comp)}
+        <div class="grid2">${num('ekpYear','ЕКП, год')}${fld('ekpNo','ЕКП, номер','например: 2175910019050861')}</div>
+        ${fld('datesText','Даты проведения','например: 08-15.09.2026 года')}
+        ${fld('venueCity','Город проведения')}
+        ${fld('venueAddress','Адрес спортивной арены','объект спорта, улица, дом')}
+        ${fld('orgBody','Общее руководство проведением')}
+        ${fld('orgDirect','Непосредственный организатор')}
+        <div class="grid2">${fld('chiefJudgeRegion','Регион главного судьи','(Омская область)')}
+          ${fld('chiefSecRegion','Регион главного секретаря','(Новосибирская область)')}</div>
+        <div class="grid2">${num('tatamiCount','Площадок (татами)')}${num('volunteers','Волонтеров, чел.')}</div>
+        <div class="grid2">${num('participants','Участников, чел.')}</div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;margin-top:6px">
+          <input type="checkbox" ${r.injuries?'checked':''} onchange="updR('injuries',this.checked)" style="width:auto">
+          Были травмы — упомянуть отчет главного врача</label>
+      </div>
+      <div>
+        <div class="card"><h3>Протесты</h3>
+          <table><thead><tr><th style="width:36px">№</th><th>Протест (кто / вид / круг — по желанию)</th><th>Решение жюри</th><th></th></tr></thead>
+          <tbody>${protRows || '<tr><td colspan="4" class="ctr hint">Протестов не поступало — в отчете появится соответствующая фраза</td></tr>'}</tbody></table>
+          <button style="margin-top:8px" onclick="addProt()">＋ Добавить протест</button>
+        </div>
+        <div class="card"><h3>Сикаку</h3>
+          <table><thead><tr><th style="width:36px">№</th><th>Спортсмен</th><th>Регион / город</th><th>Срок</th><th></th></tr></thead>
+          <tbody>${sikRows || '<tr><td colspan="5" class="ctr hint">Сикаку не вынесено — в отчете появится «сикаку не вынесено»</td></tr>'}</tbody></table>
+          <button style="margin-top:8px" onclick="addSik()">＋ Добавить сикаку</button>
+        </div>
+        <div class="card"><h3>Дополнительно</h3>
+          <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px">Свободный абзац в конце характеристики (по желанию)</label>
+          <textarea rows="4" style="width:100%;font:inherit" placeholder="Особые отметки о работе судейской коллегии, пожелания..."
+            oninput="updR('extra',this.value)">${esc(r.extra)}</textarea>
+        </div>
+      </div>
+    </div>
+    <h3 style="margin:4px 0 8px">Предпросмотр отчета</h3>
+    <div class="card" id="reportPreview" style="overflow:auto"></div>`;
+  renderReportPreview();
+}
+function renderReportPreview(){
+  const el = $('#reportPreview');
+  if(el) el.innerHTML = reportDocHTML();
+}
+
+// HTML документа отчета (для печати и Word)
+function reportDocHTML(){
+  const r = S.report || defaultReport(), s = S.settings;
+  const comp = r.compName || s.comp;
+  const venue = [r.venueCity, r.venueAddress].filter(Boolean).join(', ');
+  const plist = (r.protests||[]).filter(Boolean);
+  const satisfied = plist.filter(p => p.decision === 'удовлетворен').length;
+  const rejected = plist.length - satisfied;
+  let protestsHTML = '';
+  if(plist.length > 0){
+    let tail;
+    if(satisfied > 0 && rejected > 0)
+      tail = `${satisfied} ${plural(satisfied,['протест','протеста','протестов'])} ${plural(satisfied,['был удовлетворен','были удовлетворены','были удовлетворены'])}, ${rejected} ${plural(rejected,['протест','протеста','протестов'])} ${plural(rejected,['был отклонен','были отклонены','были отклонены'])}`;
+    else if(satisfied > 0)
+      tail = `${satisfied} ${plural(satisfied,['протест','протеста','протестов'])} ${plural(satisfied,['был удовлетворен','были удовлетворены','были удовлетворены'])}`;
+    else
+      tail = `${rejected} ${plural(rejected,['протест','протеста','протестов'])} ${plural(rejected,['был отклонен','были отклонены','были отклонены'])}`;
+    const notes = plist.map((p,i) => p.note ? `<br>&nbsp;&nbsp;&nbsp;&nbsp;${i+1}) ${esc(p.note)} — ${p.decision==='удовлетворен'?'удовлетворен':'отклонен'}.` : '').join('');
+    protestsHTML = `<p>В ходе соревнований поступило ${plist.length} ${plural(plist.length,['протест','протеста','протестов'])}.
+    Решением аппеляционного жюри ${tail}.${notes}</p>`;
+  } else {
+    protestsHTML = '<p>В ходе соревнований протесты не поступали.</p>';
+  }
+  const n = (r.sikaku||[]).filter(p => p.name).length;
+  const sikakuHTML = n > 0 ? `
+    <p>В ходе соревнований было вынесено ${n} сикаку:</p>
+    ${r.sikaku.filter(p=>p.name).map((p,i)=>`<p>${i+1}. ${esc(p.name)} - спортсмен, ${esc(p.region)}.
+    Срок сикаку определен главной судейской коллегией – ${esc(p.term)}. Рапорт направлен в КДК ФКР.</p>`).join('')}` :
+    `<p>В ходе соревнований сикаку не вынесено.</p>`;
+  const tatamiWord = r.tatamiCount === 1 ? 'одной площадке' : r.tatamiCount + '-х площадках';
+  return `<div class="pa-doc">
+    <p class="pa-center">ФЕДЕРАЦИЯ КАРАТЭ РОССИИ</p>
+    <p class="pa-title" style="margin-top:16px">ОТЧЕТ ГЛАВНОГО СУДЬИ</p>
+    <p><b>Наименование соревнований:</b> ${esc(comp)}</p>
+    ${r.ekpNo ? `<p>(Спортивное мероприятие в ЕКП на ${esc(r.ekpYear)} год № ${esc(r.ekpNo)})</p>` : ''}
+    <p><b>Дата и место проведения:</b> Соревнования проводились ${esc(r.datesText)}${r.venueCity ? ` в г. ${esc(r.venueCity)}` : ''}.</p>
+    ${venue ? `<p>Адрес спортивной арены: ${esc(venue)}.</p>` : ''}
+    <p><b>Организаторы проведения соревнований:</b> Общее руководство проведением соревнований осуществляют ${esc(r.orgBody)}</p>
+    <p>Непосредственный организатор соревнований: ${esc(r.orgDirect)}</p>
+    <p><b>Главный судья соревнований:</b> ${esc(s.chiefJudge)}, спортивный судья ${catWord(s.chiefJudgeCat)} категории${r.chiefJudgeRegion ? ` (${esc(r.chiefJudgeRegion)})` : ''}.</p>
+    <p><b>Главный секретарь соревнований:</b> ${esc(s.chiefSec)}, спортивный судья ${catWord(s.chiefSecCat)} категории${r.chiefSecRegion ? ` (${esc(r.chiefSecRegion)})` : ''}.</p>
+    <p><b>Краткая характеристика проведенных соревнований:</b></p>
+    <p>Соревнования проводились в соответствии с правилами вида спорта «каратэ», утверждёнными приказом Министерства спорта Российской Федерации № 1115 от 28 декабря 2023 года и согласно Положению о соревнованиях.</p>
+    <p>Статистические данные о спортсменах, количестве участников по категориям и их квалификации приведены в Протоколе Мандатной комиссии.</p>
+    <p>Судейская коллегия соревнований сформирована из судей, аттестованных Федерацией каратэ России. Соревнования проводились на ${tatamiWord}.</p>
+    <p>Температура воздуха, освещённость, воздухообмен в зале соответствовали нормам. Оргкомитетом соревнований организовано горячее питание судей.</p>
+    <p>Организована охрана соревнований. Обеспечена работа волонтеров, в количестве – ${r.volunteers} человек, а также разминочная зона для спортсменов. Техническое обеспечение соревнований было организовано с использованием специализированного программно-технического комплекса Всемирной Федерации каратэ – системы SPORT DATA. Каждая площадка была оборудована двумя электронными видеоэкранами. Организована прямая видеотрансляция хода соревнований с каждой площадки.</p>
+    <p>Общее количество участников – ${r.participants} человек.</p>
+    ${r.injuries ? '<p>Травмы и несчастные случаи, полученные спортсменами в ходе соревнований отражены в отчете главного врача.</p>' : ''}
+    <p>Физическая, техническая, тактическая подготовка спортсменов к соревнованиям – хорошая.</p>
+    ${protestsHTML}
+    ${sikakuHTML}
+    ${r.extra ? `<p>${esc(r.extra)}</p>` : ''}
+    <p>Список судейской коллегии с указанием квалификации судей, должности на данном турнире и оценки работы приведен в Приложении 1.</p>
+    <div class="pa-sign"><span>Главный судья соревнований&nbsp;&nbsp;&nbsp;__________ ${esc(s.chiefJudge)}</span></div>
+  </div>`;
+}
+function printReport(){ printHTML(reportDocHTML()); }
+function wordReport(){ wordDoc(reportDocHTML(), 'Отчет главного судьи.doc'); }
+
+
+/* ---------- 7. ЭКЗАМЕН ---------- */
+// формулировки категории для справок (как в утверждённых шаблонах)
+const CERT_CAT_WORD = {'СВК':'Спортивный судья Всероссийской категории','С1К':'Спортивный судья первой категории',
+  'С2К':'Спортивный судья второй категории','С3К':'Спортивный судья третьей категории',
+  'ЮС':'Спортивный судья юношеской категории'};
+const discWord = d => ({'Кумитэ':'КУМИТЭ','Ката':'КАТА','Тренерский':'ТРЕНЕРСКИЙ ЭКЗАМЕН'}[d] || String(d||'').toUpperCase());
+
+function updExSet(k, v){ if(!S.exam) S.exam = defaultExam(); S.exam[k] = v; persist(); }
+function updEx(id, f, v){
+  const p = S.exam.parts.find(x => x.id === id); if(!p) return;
+  p[f] = v; persist();
+}
+function addExPart(){
+  S.exam.parts.push({id: Date.now() + nextId++, fio:'', region:'', disc:'Кумитэ',
+    curCat:'', theory:'', video:'', practice:'', newCat:''});
+  persist(); renderExam();
+}
+function delExPart(id){
+  if(!confirm('Удалить участника из списка экзамена?')) return;
+  S.exam.parts = S.exam.parts.filter(p => p.id !== id);
+  persist(); renderExam();
+}
+
+function renderExam(){
+  if(!S.exam) S.exam = defaultExam();
+  const e = S.exam;
+  const setFld = (k,label,ph='') => `<div><label>${label}</label>
+    <input value="${esc(e[k])}" placeholder="${esc(ph)}" oninput="updExSet('${k}',this.value)"></div>`;
+  const certParts = e.parts.filter(p => p.disc !== 'Тренерский');
+  const nPassed = certParts.filter(p => p.newCat).length;
+  const nListen = certParts.length - nPassed;
+  const rows = e.parts.map((p,i) => `<tr>
+    <td class="ctr">${i+1}</td>
+    <td><input value="${esc(p.fio)}" placeholder="ФИО" oninput="updEx(${p.id},'fio',this.value)"></td>
+    <td><input value="${esc(p.region)}" placeholder="Регион" oninput="updEx(${p.id},'region',this.value)"></td>
+    <td><select onchange="updEx(${p.id},'disc',this.value);persist()">${EXAM_DISCS.map(d=>`<option ${d===p.disc?'selected':''}>${d}</option>`).join('')}</select></td>
+    <td><select onchange="updEx(${p.id},'curCat',this.value);persist()"><option value="">—</option>${sel(CATS, p.curCat)}</select></td>
+    <td><input value="${esc(p.theory)}" placeholder="98%" style="width:64px" oninput="updEx(${p.id},'theory',this.value)"></td>
+    <td><input value="${esc(p.video)}" placeholder="%" style="width:56px" title="Видеотест (ката)" oninput="updEx(${p.id},'video',this.value)"></td>
+    <td><input value="${esc(p.practice)}" placeholder="3-5" style="width:52px" oninput="updEx(${p.id},'practice',this.value)"></td>
+    <td><select onchange="updEx(${p.id},'newCat',this.value);persist();renderExam()" title="Присвоенная категория (пусто = слушатель)">
+      <option value="">— слушатель —</option>${sel(CATS, p.newCat)}</select></td>
+    <td class="ctr"><button class="dng" title="Удалить" onclick="delExPart(${p.id})">✕</button></td></tr>`).join('');
+  $('#tab-exam').innerHTML = `
+    <div class="toolbar">
+      <button class="pri" onclick="openDlg('dlgExamPaste')">📋 Вставить списком</button>
+      <button onclick="addExPart()">＋ Участник</button>
+      <button onclick="printExamProtocol()">🖨 Протокол / PDF</button>
+      <button onclick="wordExamProtocol()">⬇ Протокол Word</button>
+      <button onclick="printExamCerts('passed')">🖨 Справки сдавшим (${nPassed})</button>
+      <button onclick="printExamCerts('listen')">🖨 Справки слушателям (${nListen})</button>
+      <button onclick="wordExamCerts('passed')">⬇ Справки Word (сдавшие)</button>
+      <button onclick="wordExamCerts('listen')">⬇ Справки Word (слушатели)</button>
+      <span class="info">Участников: ${e.parts.length} · сдали: ${nPassed} · слушатели: ${nListen}</span></div>
+    <div class="card"><div class="grid2">
+      ${setFld('date','Дата семинара','например: 03.12.2025')}
+      ${setFld('city','Город')}
+      ${setFld('place','Место проведения','улица, объект')}
+      ${setFld('chair','Председатель аттестационной комиссии','А.В. Сорокин')}
+      <div><label>Категория председателя</label><select onchange="updExSet('chairCat',this.value);persist()">${sel(CATS, e.chairCat)}</select></div>
+      <div><label>Уровень семинара (для справок слушателям)</label>
+        <select onchange="updExSet('level',this.value);persist()">
+          ${[['во Всероссийском','Всероссийский'],['в межрегиональном','межрегиональный'],
+             ['в региональном','региональный'],['в городском','городской']]
+            .map(([v,l])=>`<option value="${v}" ${v===e.level?'selected':''}>${l}</option>`).join('')}
+        </select></div>
+    </div></div>
+    <div style="overflow:auto;max-height:62vh"><table><thead><tr>
+      <th>№</th><th>ФИО</th><th>Регион</th><th>Дисциплина</th><th>Текущая кат.</th>
+      <th>Теория</th><th>Видеотест</th><th>Практика</th><th>Присвоена кат.</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="10" class="ctr hint">Список пуст — вставьте участников списком или добавьте вручную</td></tr>'}</tbody></table></div>
+    <p class="hint">«Присвоена кат.» заполнена — участник считается сдавшим: справка с результатом и категорией, попадает в таблицу
+    результатов протокола. Пусто — слушатель: справка о прохождении теоретической подготовки, в таблицу результатов не входит.
+    Видеотест заполняется для ката, практика — оценка 3–5.</p>`;
+}
+
+/* --- Вставка списком --- */
+let examParsed = [];
+function parseExamPaste(){
+  const txt = $('#pasteExamText').value.trim(); if(!txt){ alert('Вставьте список.'); return; }
+  if(!S.exam) S.exam = defaultExam();
+  const exist = new Set(S.exam.parts.map(p => p.fio.trim().toLowerCase()));
+  examParsed = []; let skipped = 0;
+  txt.split(/\r?\n/).forEach(line => {
+    if(!line.trim()) return;
+    const cells = line.split('\t').map(s => s.trim()).filter(Boolean);
+    // ФИО: первая ячейка-не-число без % и времени, минимум два слова
+    const fi = cells.findIndex(c => !/^\d+$/.test(c) && !/%|:\d{2}|из \d+/.test(c) && c.split(/\s+/).length >= 2 && !isCat(c));
+    if(fi < 0){ skipped++; return; }
+    const fio = cells[fi];
+    if(exist.has(fio.toLowerCase())){ skipped++; return; }
+    const r = {fio, region:'', curCat:'', disc:'Кумитэ', theory:'', video:'', practice:'', newCat:''};
+    const percents = [];
+    cells.forEach((c, i) => {
+      if(i === fi || /^\d+$/.test(c)) return;
+      const cl = c.toLowerCase();
+      if(isCat(c)){ if(!r.curCat) r.curCat = normCat(c); return; }
+      if(/кумитэ/.test(cl)) r.disc = 'Кумитэ';
+      else if(/ката/.test(cl)) r.disc = 'Ката';
+      else if(/тренер/.test(cl)) r.disc = 'Тренерский';
+      const pm = c.match(/(\d{1,3})\s*%/);
+      if(pm){ percents.push(pm[1] + '%'); return; }   // «ход» и «результат» — берём итоговый (последний)
+      if(!r.region && c.split(/\s+/).length >= 2 && !/:\d{2}/.test(c) && !/^\d{1,2}\s+\D+\s+\d{4}/.test(c))
+        r.region = matchRegion(c);                    // даты/время — не регион
+    });
+    if(percents.length) r.theory = percents[percents.length - 1];
+    examParsed.push(r);
+  });
+  const pv = $('#examPastePreview');
+  if(!examParsed.length){
+    pv.innerHTML = '<p class="miss">Никого не нашёл — проверьте, что список скопирован целиком.</p>';
+    $('#examPasteAddBtn').disabled = true; return;
+  }
+  pv.innerHTML = '<table><thead><tr><th>ФИО</th><th>Регион</th><th>Дисциплина</th><th>Тек. кат.</th><th>Теория</th></tr></thead><tbody>' +
+    examParsed.map(r => `<tr><td>${esc(r.fio)}</td><td>${esc(r.region)}</td><td class="ctr">${esc(r.disc)}</td><td class="ctr">${esc(r.curCat)}</td><td class="ctr">${esc(r.theory)}</td></tr>`).join('') +
+    `</tbody></table><p class="hint">Найдено: ${examParsed.length}${skipped ? ' · пропущено: ' + skipped : ''} — проверьте перед добавлением.</p>`;
+  $('#examPasteAddBtn').disabled = false;
+}
+function addExamParsed(){
+  examParsed.forEach(r => S.exam.parts.push({id: Date.now() + nextId++, video:'', practice:'', newCat:'', ...r}));
+  persist(); closeDlg('dlgExamPaste'); renderExam();
+}
+
+
+/* --- Справки --- */
+function examCertHTML(p){
+  const e = S.exam;
+  const passed = !!p.newCat;
+  const dw = discWord(p.disc);
+  const sem = passed ? 'в судейском аттестационном семинаре по каратэ,'
+                   : (e.level || 'во Всероссийском') + ' судейском аттестационном семинаре по каратэ,';
+  const middle = passed ? `
+    <tr><td colspan="4">и успешно сдал(а) теоретический и практический экзамен по ${dw}:</td></tr>
+    <tr><td>Результат теоретического экзамена:</td><td colspan="2" class="ctr"><b><i>${esc(p.theory) || '—'}</i></b></td><td>правильных ответов</td></tr>
+    <tr><td colspan="4">Решением аттестационной комиссии сдан зачет на квалификационную категорию:</td></tr>
+    <tr><td colspan="2" class="ctr"><b><i>${esc(CERT_CAT_WORD[p.newCat] || p.newCat)}</i></b></td>
+        <td colspan="2" class="ctr">дисциплина <b>${dw}</b></td></tr>`
+    : `<tr><td colspan="4">В качестве участника, прошедшего теоретическую подготовку по виду спорта «Каратэ», дисциплина ${dw}</td></tr>`;
+  return `<div style="page-break-after:always;padding-top:60px">
+    <table class="cert-table">
+    <tr><td colspan="4" class="ctr"><b>Справка<br>подтверждение</b></td></tr>
+    <tr><td>Подтверждает, что</td><td colspan="2" class="ctr"><b><i>${esc(p.fio)}</i></b></td><td><i>участвовал(а)</i></td></tr>
+    <tr><td colspan="4">${sem}</td></tr>
+    <tr><td>который проходил:</td><td class="ctr"><i>${esc(e.date)}</i></td><td>в городе:</td><td class="ctr"><i>${esc(e.city)}</i></td></tr>
+    ${middle}
+    <tr><td colspan="4">Председатель аттестационной комиссии ${esc(e.chair)}</td></tr>
+    </table></div>`;
+}
+function examCertDocHTML(kind){
+  const list = S.exam.parts.filter(p => p.disc !== 'Тренерский')   // за тренерский справки не выдаются
+    .filter(p => kind === 'passed' ? !!p.newCat : !p.newCat)
+    .sort((a,b) => a.fio.localeCompare(b.fio, 'ru'));
+  return `<div class="pa-doc">${list.map(examCertHTML).join('')}</div>`;
+}
+function printExamCerts(kind){ printHTML(examCertDocHTML(kind)); }
+function wordExamCerts(kind){ wordDoc(examCertDocHTML(kind), 'Справки ' + (kind === 'passed' ? 'сдавшие' : 'слушатели') + '.doc'); }
+
+/* --- Протокол --- */
+function examProtocolHTML(){
+  const e = S.exam;
+  const all = e.parts.slice().sort((a,b) => a.fio.localeCompare(b.fio, 'ru'));
+  const discBlock = (disc, kata) => {
+    const results = all.filter(p => p.disc === disc);
+    if(!results.length) return '';
+    return `<p class="pa-title" style="text-align:left;margin-top:8px">Результаты экзамена по ${disc.toLowerCase()}:</p>
+    <table class="pa-table"><thead><tr><th style="width:32px">№</th><th>Фамилия Имя Отчество</th><th>Регион</th>
+      <th>Текущая СК</th><th>Теория</th>${kata ? '<th>Видео Тест</th>' : ''}<th>Практика</th><th>Присвоена СК</th></tr></thead><tbody>
+    ${results.map((p,i) => `<tr><td class="ctr">${i+1}</td><td>${esc(p.fio)}</td><td>${esc(p.region)}</td>
+      <td class="ctr">${esc(p.curCat)}</td><td class="ctr">${esc(p.theory)}</td>${kata ? `<td class="ctr">${esc(p.video)}</td>` : ''}
+      <td class="ctr">${esc(p.practice)}</td><td class="ctr">${esc(p.newCat)}</td></tr>`).join('')}
+    </tbody></table>`;
+  };
+  return `<div class="pa-doc">
+    <p class="pa-title">ПРОТОКОЛ<br>РЕЗУЛЬТАТОВ АТТЕСТАЦИОННОГО СУДЕЙСКОГО СЕМИНАРА ПО КАРАТЭ</p>
+    <p class="pa-center">г. ${esc(e.city)} ${esc(e.date)} г.</p>
+    <p style="text-align:justify">${esc(e.date)} в соответствии с «Положением о спортивных судьях», утвержденных приказом
+    Минспорттуризма РФ № 913 от 30.09.2015 г., и квалификационными требованиями по каратэ, проведен аттестационный судейский семинар.</p>
+    <p style="text-align:justify">Семинар включал в себя теоретическую часть с разбором правил WKF, теоретический и практический экзамен.</p>
+    ${e.place ? `<p style="text-align:justify">Место проведения семинара: ${esc(e.place)}</p>` : ''}
+    <p class="pa-title" style="text-align:left;margin-top:8px">Участники семинара:</p>
+    <table class="pa-table"><thead><tr><th style="width:32px">№</th><th>ФИО</th><th>Регион</th><th>Действующая категория</th></tr></thead><tbody>
+    ${all.map((p,i) => `<tr><td class="ctr">${i+1}</td><td>${esc(p.fio)}</td><td>${esc(p.region)}</td><td class="ctr">${esc(p.curCat)}</td></tr>`).join('')
+      || '<tr><td colspan="4" class="ctr">—</td></tr>'}
+    </tbody></table>
+    ${discBlock('Кумитэ', false)}
+    ${discBlock('Ката', true)}
+    ${discBlock('Тренерский', false)}
+    <div class="pa-sign" style="margin-top:36px"><span>Председатель Судейского комитета ФКР</span>
+    <span>Судья ${catWord(e.chairCat)} категории ${esc(e.chair)}</span></div>
+  </div>`;
+}
+function printExamProtocol(){ printHTML(examProtocolHTML()); }
+function wordExamProtocol(){ wordDoc(examProtocolHTML(), 'Протокол экзамена.doc'); }
+
+
+/* ---------- АВТОРАСПРЕДЕЛЕНИЕ ПО ТАТАМИ ---------- */
+let autoDraft = null;   // {assign:{id:t}, count, manual:[{t,senior,deputy}], poolCount}
+
+function openAuto(){
+  buildAutoGrid();
+  $('#autoPreview').innerHTML = '';
+  $('#autoInfo').textContent = '';
+  autoDraft = null;
+  $('#autoApplyBtn').disabled = true;
+  openDlg('dlgAuto');
+}
+function buildAutoGrid(){
+  const n = Math.max(1, Math.min(16, +$('#autoTatamiCount').value || 4));
+  $('#autoTatamiCount').value = n;
+  // выбор из ВСЕХ судей, включая резерв (должности будут назначены после распределения)
+  const all = S.judges.slice().sort((a,b)=> ((ROLE_IDX[a.role] ?? 9) - (ROLE_IDX[b.role] ?? 9)) || a.fio.localeCompare(b.fio,'ru'));
+  const opts = (selId) => `<option value="">— выберите —</option>` +
+    all.map(j=>`<option value="${j.id}" ${j.id === selId ? 'selected' : ''}>` +
+      `${esc(j.fio)} (${esc(j.catMS)})${j.role ? ' · ' + esc(j.role) : ''}</option>`).join('');
+  let rows = '';
+  for(let t = 1; t <= n; t++){
+    const depIds = all.filter(j => j.role === 'Зам. старшего судьи' && +j.tatami === t).slice(0,3).map(j => j.id);
+    while(depIds.length < 3) depIds.push(0);
+    const sen = all.find(j => j.role === 'Старший судья' && +j.tatami === t);
+    rows += `<tr><td class="ctr"><b>${t}</b></td>
+      <td><select id="autoType${t}" title="Профиль площадки — влияет на распределение">
+        ${['Кумитэ','Ката','Ката/Кумитэ'].map(x=>`<option>${x}</option>`).join('')}</select></td>
+      <td><select id="autoS${t}">${opts(sen ? sen.id : 0)}</select></td>
+      ${depIds.map((id,i)=>`<td><select id="autoD${i+1}_${t}">${opts(id)}</select></td>`).join('')}</tr>`;
+  }
+  $('#autoGrid').innerHTML = `<table><thead><tr><th style="width:56px">Татами</th>
+    <th style="width:130px">Тип площадки</th>
+    <th>Старший судья</th><th>Зам. №1</th><th>Зам. №2</th><th>Зам. №3</th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
+}
+function runAuto(){
+  const n = Math.max(1, Math.min(16, +$('#autoTatamiCount').value || 4));
+  // 1. Ручные назначения: старший + до 3 замов на площадку
+  const manual = [];
+  for(let t = 1; t <= n; t++){
+    manual.push({t, senior: +($('#autoS'+t).value || 0),
+      deputies: [1,2,3].map(i => +($('#autoD'+i+'_'+t).value || 0)).filter(Boolean)});
+  }
+  const picks = manual.flatMap(m => [m.senior, ...m.deputies].filter(Boolean));
+  if(new Set(picks).size !== picks.length){
+    alert('Один судья выбран на несколько площадок — поправьте ручные назначения.'); return;
+  }
+  const manualIds = new Set(picks);
+  // типы площадок: Кумитэ / Ката / Ката+Кумитэ
+  const types = {}; for(let t = 1; t <= n; t++) types[t] = ($('#autoType'+t).value || 'Кумитэ');
+  // 2. Пул: рабочий состав минус руководство (ГСК) и минус ручные назначения
+  // пул: все, кроме руководства (ГСК) и ручных назначений — включая резерв (должности — после распределения)
+  const pool = S.judges.filter(j => !isGSK(j.role) && !manualIds.has(j.id));
+  if(!pool.length){ alert('Некого распределять: добавьте судей в список.'); return; }
+  // 3. Сортировка: в первую очередь высшие категории минспорта (СМК/СВК/С1К/С2К), внутри — случайно
+  const rankMS = j => CAT_RANK[j.catMS] || 0;
+  const sorted = pool.slice().sort((a,b)=> rankMS(b)-rankMS(a) || Math.random() - 0.5);
+  // 4. Жадная раскладка: главный баланс — мин.спорт категории; далее специалисты и регионы
+  //    (регионы старших/замов учитываются сразу — они входят в стартовый баланс площадки)
+  const g = {}; for(let t = 1; t <= n; t++) g[t] = {total:0, cats:{}, prof:{}, regions:{}};
+  const assign = {};
+  const bump = (j, t) => {                    // учесть судью в балансе площадки
+    if(!j) return;
+    const type = types[t];
+    const profCat = type === 'Ката' ? (j.kata || j.catMS)
+      : type === 'Кумитэ' ? (j.kumite || j.catMS) : j.catMS;
+    g[t].total++;
+    g[t].cats[j.catMS] = (g[t].cats[j.catMS] || 0) + 1;
+    g[t].prof[profCat] = (g[t].prof[profCat] || 0) + 1;
+    g[t].regions[j.region] = (g[t].regions[j.region] || 0) + 1;
+  };
+  manual.forEach(m => {
+    if(m.senior){ assign[m.senior] = m.t; bump(S.judges.find(j => j.id === m.senior), m.t); }
+    m.deputies.forEach(d => { assign[d] = m.t; bump(S.judges.find(j => j.id === d), m.t); });
+  });
+  sorted.forEach(j => {
+    const hasKumi = !!j.kumite, hasKata = !!j.kata, msR = rankMS(j);
+    let best = 1, bestScore = Infinity;
+    for(let t = 1; t <= n; t++){
+      const type = types[t];
+      const profCat = type === 'Ката' ? (j.kata || j.catMS)
+        : type === 'Кумитэ' ? (j.kumite || j.catMS) : j.catMS;
+      // нет профильной дисциплины: высшая минспорт категория (СМК/СВК) — без штрафа,
+      // С1К — небольшой, далее растущий (С3К/ЮС без дисциплины почти не идут на «чистую» площадку)
+      const mismatch = Math.max(0, 5 - msR) * 1.5
+        * ((type === 'Ката' && !hasKata) || (type === 'Кумитэ' && !hasKumi) ? 1 : 0);
+      // на каждой площадке должны быть специалисты по её профилю
+      let spec = 0;
+      if(type === 'Ката' && hasKata) spec -= 2;
+      if(type === 'Кумитэ' && hasKumi) spec -= 2;
+      if(type === 'Ката/Кумитэ' && hasKata && hasKumi) spec -= 2.5;
+      if(type === 'Ката' && hasKata && !hasKumi) spec -= 1;      // чистый спец тянет сильнее
+      if(type === 'Кумитэ' && hasKumi && !hasKata) spec -= 1;
+      const score = g[t].total * 3
+        + (g[t].cats[j.catMS] || 0) * 5      // ГЛАВНЫЙ баланс — категории мин.спорта
+        + (g[t].prof[profCat] || 0) * 3      // вторичный — категории по профилю площадки
+        + (g[t].regions[j.region] || 0) * 3   // региональный баланс
+        + mismatch + spec
+        + Math.random() * 2;                 // случайность развязок
+      if(score < bestScore){ bestScore = score; best = t; }
+    }
+    assign[j.id] = best;
+    bump(j, best);
+  });
+  autoDraft = {assign, count: n, manual, types, poolCount: pool.length};
+  renderAutoPreview();
+  $('#autoApplyBtn').disabled = false;
+  $('#autoInfo').textContent = 'Распределено: ' + pool.length + ' судей + ' + picks.length + ' ручных назначений';
+}
+function renderAutoPreview(){
+  const {assign, count, manual} = autoDraft;
+  const name = id => { const j = S.judges.find(x => x.id === id); return j ? j.fio + ' (' + j.catMS + ')' : '—'; };
+  let html = '';
+  for(let t = 1; t <= count; t++){
+    const list = S.judges.filter(j => assign[j.id] === t)
+      .sort((a,b)=> (ROLE_IDX[a.role]-ROLE_IDX[b.role]) || a.fio.localeCompare(b.fio,'ru'));
+    const cats = {}, regs = {};
+    list.forEach(j => {
+      cats[j.catMS] = (cats[j.catMS] || 0) + 1;
+      regs[j.region] = (regs[j.region] || 0) + 1;
+    });
+    const m = manual.find(x => x.t === t) || {};
+    const catStr = Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,k])=>c + '×' + k).join(', ');
+    const regStr = Object.entries(regs).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([r,k])=>r + '×' + k).join(', ')
+      + (Object.keys(regs).length > 4 ? '…' : '');
+    const type = (autoDraft.types && autoDraft.types[t]) || '';
+    html += `<div class="tatami-title" style="overflow:hidden;margin-top:12px">Татами ${t}${type ? ' · ' + esc(type) : ''} · ${list.length} чел.
+      <span style="float:right;font-weight:400;font-size:12px">старший: ${esc(name(m.senior))} · зам: ${(m.deputies||[]).map(d=>esc(name(d))).join(', ') || '—'}</span></div>
+      <table><thead><tr><th style="width:34px">№</th><th>Должность</th><th>ФИО</th><th>Регион</th><th style="width:64px">Категория</th></tr></thead><tbody>
+      ${list.map((j,i)=>`<tr><td class="ctr">${i+1}</td><td>${esc(j.role)}</td><td><b>${esc(j.fio)}</b></td>
+        <td>${esc(j.region)}</td><td class="ctr">${esc(j.catMS)}</td></tr>`).join('')}
+      </tbody></table>
+      <p class="hint">Категории: ${catStr || '—'} · Регионы: ${regStr || '—'}</p>`;
+  }
+  $('#autoPreview').innerHTML = html;
+}
+function applyAuto(){
+  if(!autoDraft) return;
+  if(!confirm('Применить распределение? Текущие номера татами у рабочих судей будут заменены.')) return;
+  Object.entries(autoDraft.assign).forEach(([id, t]) => {
+    const j = S.judges.find(x => x.id === +id); if(j) j.tatami = +t;
+  });
+  persist(); closeDlg('dlgAuto');
+  switchTab(curTab);   // перерисовать текущую вкладку — дальше правки вручную
+}
+
+/* ---------- 5. ТАРИФЫ ---------- */
+function renderTariffs(){
+  const coef = +S.settings.coef || 1;                     // общий коэффициент соревнований
+  const rows = S.tariffs.map((t,i)=>`<tr>
+    <td class="ctr">${i+1}</td>
+    <td><select onchange="updT(${i},'cat',this.value)">${sel(CATS,t.cat)}</select></td>
+    <td><select onchange="updT(${i},'role',this.value)">${ROLES.map(r=>`<option ${r===t.role?'selected':''}>${r}</option>`).join('')}</select></td>
+    <td><input type="number" class="num" value="${t.rate}" oninput="updT(${i},'rate',this.value)"></td>
+    <td class="num">${fmt(Math.floor(+t.rate * coef))} ₽</td>
+    <td><input type="number" min="0" class="num" value="${t.extraDays||0}" oninput="updT(${i},'extraDays',this.value)"></td>
+    <td class="ctr"><button class="dng" onclick="S.tariffs.splice(${i},1);persist();renderTariffs()">✕</button></td></tr>`).join('');
+  let coefOpts = '';
+  for(let c=0.5; c<=1.5001; c=Math.round((c+0.1)*10)/10){
+    const label = c===0.8 ? '0,8 — региональные' : (c===1 ? '1,0 — межрегиональные и выше' : String(c.toFixed(1)).replace('.',','));
+    coefOpts += `<option value="${c.toFixed(1)}" ${Math.abs(c-coef)<0.001?'selected':''}>${label}</option>`;
+  }
+  $('#tab-tariffs').innerHTML = `
+    <div class="card" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <b>Коэффициент соревнований:</b>
+      <select onchange="setCoef(this.value)" style="width:290px">${coefOpts}</select>
+      <span class="hint" style="margin:0">Умножается на все ставки (округление вниз до рубля). Выбор: 0,8 — региональные соревнования, 1,0 — межрегиональные и выше. Шаг 0,1.</span>
+    </div>
+    <div class="toolbar"><button class="pri" onclick="S.tariffs.push({cat:'С3К',role:'Судья',rate:0,extraDays:0});persist();renderTariffs()">＋ Добавить связку</button>
+    <span class="info">Связка = категория мин.спорта + должность. Ставка — день работы, ₽. «Доп. дни» — оплачиваемые дни подготовки.</span></div>
+    <table><thead><tr><th>№</th><th>Категория</th><th>Должность</th><th>Ставка, ₽</th><th>С коэфф., ₽</th><th>Доп. дни</th><th></th></tr></thead>
+    <tbody>${rows}</tbody></table>
+    <p class="hint">Если для судьи не находится связка, в ведомости ставка = 0 и горит предупреждение «⚠ нет тарифа».
+    Добавьте связку здесь — ведомость пересчитается автоматически.</p>`;
+}
+function setCoef(v){ S.settings.coef = +v || 1; persist(); renderTariffs(); }
+
+function updT(i, f, v){ S.tariffs[i][f] = (f==='rate'||f==='extraDays') ? +v : v; persist(); }
+
+/* ---------- ЖЮРИ ---------- */
+let curJury = 0;   // какое жюри сейчас редактируется в окне
+function openJury(){
+  if(!S.juries) S.juries = [];
+  if(!S.juries.length) S.juries.push({members:[]});
+  curJury = Math.min(curJury, S.juries.length-1);
+  renderJuryDlg(); openDlg('dlgJury');
+}
+function renderJuryDlg(){
+  const tabs = S.juries.map((j,i)=>`<button class="${i===curJury?'pri':''}" onclick="curJury=${i};renderJuryDlg()">Жюри №${i+1}</button>`).join('');
+  const ws = working().slice().sort((a,b)=> (ROLE_IDX[a.role]-ROLE_IDX[b.role]) || a.fio.localeCompare(b.fio,'ru'));
+  $('#juryList').innerHTML = `<div class="toolbar">${tabs}
+      <button onclick="S.juries.push({members:[]});curJury=S.juries.length-1;persist();renderJuryDlg();refreshJuryBtns()">＋ Добавить жюри</button>
+      <button class="dng" onclick="S.juries.splice(curJury,1);if(curJury>0)curJury--;persist();renderJuryDlg();refreshJuryBtns()">🗑 Удалить</button>
+      <span class="info">всего жюри: ${S.juries.length}</span></div>
+    <p class="hint">Супервайзер аппеляционных жюри:
+      <select onchange="setSupervisor(this.value)" style="width:auto;display:inline-block">
+        <option value="">— не выбран —</option>
+        ${ws.map(j=>`<option value="${j.id}" ${j.id===S.supervisor?'selected':''}>${esc(j.fio)} (${esc(j.catMS)})</option>`).join('')}
+      </select></p>
+    <table><thead><tr><th style="width:36px"></th><th>ФИО</th><th>Регион</th><th>Должность</th></tr></thead><tbody>${ws.map(j=>`<tr>
+      <td class="ctr"><input type="checkbox" ${S.juries[curJury].members.includes(j.id)?'checked':''}
+        onchange="toggleJuryM(${j.id},this.checked)" style="width:auto"></td>
+      <td><b>${esc(j.fio)}</b></td><td>${esc(j.region)}</td><td>${esc(j.role)}</td></tr>`).join('')}
+    </tbody></table>`;
+}
+function refreshJuryBtns(){ if(curTab==='final') renderFinal(); if(curTab==='judges') renderJudges(); }
+function toggleJuryM(id, on){
+  const m = S.juries[curJury].members;
+  if(on) m.push(id); else S.juries[curJury].members = m.filter(x=>x!==id);
+  persist(); refreshJuryBtns();
+}
+function setSupervisor(v){ S.supervisor = v ? +v : null; persist(); refreshJuryBtns(); }
+
+/* ---------- НАСТРОЙКИ ---------- */
+function openSettings(){
+  const s = S.settings;
+  const fld = (k,label,ph='')=>`<div><label>${label}</label><input id="set_${k}" value="${esc(s[k])}" placeholder="${ph}"></div>`;
+  $('#settingsForm').innerHTML =
+    fld('comp','Название соревнования') + fld('compFull','Возрастные группы (вторая строка шапки)') +
+    fld('city','Город') + fld('dates','Даты') +
+    `<div><label>Количество дней</label><input id="set_days" type="number" min="1" max="7" value="${s.days}"></div>` +
+    fld('chiefJudge','Главный судья (ФИО)') + fld('chiefJudgeCat','Его категория') +
+    fld('chiefSec','Главный секретарь (ФИО)') + fld('chiefSecCat','Его категория');
+  openDlg('dlgSettings');
+}
+function saveSettings(){
+  ['comp','compFull','city','dates','chiefJudge','chiefJudgeCat','chiefSec','chiefSecCat']
+    .forEach(k=>S.settings[k] = $('#set_'+k).value.trim());
+  S.settings.days = Math.max(1, Math.min(7, +$('#set_days').value||4));
+  persist(); closeDlg('dlgSettings'); renderAll();
+}
+
+/* ---------- ПЕЧАТЬ ---------- */
+function printHTML(inner, landscape){
+  $('#printArea').innerHTML = inner;
+  document.title = 'Печать';
+  window.print();
+}
+/* ---------- ЭКСПОРТ В WORD ---------- */
+// Универсальное сохранение: диалог «Сохранить как» (Chrome/Edge) или скачивание
+async function saveBlob(blob, fname, desc){
+  if(window.showSaveFilePicker){
+    try{
+      const handle = await window.showSaveFilePicker({
+        suggestedName: fname,
+        types: [{description: desc, accept: {[blob.type]: ['.' + fname.split('.').pop()]}}]
+      });
+      const w = await handle.createWritable();
+      await w.write(blob); await w.close();
+      return;
+    }catch(e){ if(e && e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = fname;
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+function wordDoc(inner, fname){
+  const demoBanner = DEMO ? '<div style="border:3px solid #c81e1e;color:#c81e1e;font-weight:bold;text-align:center;padding:10px;font-size:16pt;margin:0 0 24px">ДЕМО-ВЕРСИЯ · полная версия: t.me/matveich877</div>' : '';
+  const h = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><style>
+    body{font-family:"Times New Roman",serif;font-size:12pt;color:#000}
+    table{border-collapse:collapse;width:100%;font-size:11pt}
+    td,th{border:1px solid #000;padding:3px 6px}
+    .pa-center{text-align:center;margin:2px 0}.pa-title{font-weight:bold;text-align:center;font-size:13pt;margin:10px 0 4px}
+    .pa-sign{display:flex;justify-content:space-between;margin-top:26px;font-size:12pt}
+    .num{text-align:right}.ctr{text-align:center}
+    .cert-table{width:680px;margin:0 auto;border-collapse:collapse;font-size:13pt}
+    .cert-table td,.cert-table th{border:1px solid #000;padding:14px 16px;vertical-align:middle}</style></head><body>${demoBanner}${inner}</body></html>`;
+  saveBlob(new Blob(['\ufeff', h], {type:'application/msword'}), fname, 'Документ Word');
+}
+
+/* ---------- ПЕЧАТЬ ---------- */
+function printHTML(inner){
+  $('#printArea').innerHTML = (DEMO ? '<div class="demo-wm">ДЕМО-ВЕРСИЯ</div>' : '') + inner;
+  window.print();
+}
+// единый HTML ведомости (используется и для печати, и для Word)
+function payrollDocHTML(){
+  const pp = S.payPrint || defaultPayPrint();
+  const col = k => pp.cols[k] !== false;
+  const n = +S.settings.days||4;
+  let list = working().filter(j => payFilter==='all' ? true : payFilter==='gsk' ? isGSK(j.role) : !isGSK(j.role));
+  if(pp.hideZero) list = list.filter(j => calc(j).total > 0);
+  list = list.filter(j => pp.cats[j.catMS] !== false && pp.rows[j.id] !== false);
+  list.sort((a,b)=> (ROLE_IDX[a.role]-ROLE_IDX[b.role]) || a.fio.localeCompare(b.fio,'ru'));
+  const activeCols = PAY_COLS.filter(([k]) => col(k));
+  const headCols = activeCols.map(([k,l]) => k==='days'
+    ? Array.from({length:n},(_,d)=>`<th>${d+1} д.</th>`).join('')
+    : `<th>${l}</th>`).join('');
+  let sum=0;
+  const tr = list.map((j,i)=>{ const c=calc(j); sum+=c.total;
+    const tds = activeCols.map(([k])=>{
+      if(k==='rate')    return `<td class="num">${c.t?fmt(c.rate):'—'}</td>`;
+      if(k==='days')    return c.days.map(v=>`<td class="num">${v||''}</td>`).join('');
+      if(k==='coef')    return `<td class="num">${fmt(c.coefSum)}</td>`;
+      if(k==='daysMoney') return `<td class="num">${fmt(c.daysMoney)}</td>`;
+      if(k==='extra')   return `<td class="ctr">${c.extraDays||''}</td>`;
+      if(k==='extraMoney') return `<td class="num">${fmt(c.extraMoney)}</td>`;
+      if(k==='pct')     return j.pct?'<td class="ctr">+10%</td>':'<td></td>';
+      if(k==='misc')    return `<td class="num">${j.misc?fmt(j.misc):''}</td>`;
+    }).join('');
+    return `<tr><td class="ctr">${i+1}</td><td class="pa-fio">${esc(j.fio)}</td><td>${esc(j.region)}</td><td class="ctr">${esc(j.catMS)}</td>
+      <td>${esc(j.role)}</td>${tds}<td class="num"><b>${fmt(c.total)}</b></td>${col('sign')?'<td></td>':''}</tr>`; }).join('');
+  const dayCells = activeCols.reduce((a,[k]) => a + (k==='days' ? n : 1), 0);
+  const totalRow = `<tr><td colspan="${5+dayCells}"><b>ИТОГО (${list.length} чел.)</b></td><td class="num"><b>${fmt(sum)}</b></td>${col('sign')?'<td></td>':''}</tr>`;
+  return `<div class="pa-doc"><p class="pa-center"><b>${esc(S.settings.comp)}</b> — ${esc(S.settings.city)}, ${esc(S.settings.dates)}</p>
+    <p class="pa-title">Зарплатная ведомость судейской коллегии</p>
+    <table class="pa-table"><thead><tr><th>№</th><th class="pa-fio">Ф.И.О.</th><th>Регион</th><th>Кат.</th><th>Должность</th>
+    ${headCols}<th>ИТОГО, ₽</th>${col('sign')?'<th>Подпись</th>':''}</tr></thead>
+    <tbody>${tr}${totalRow}</tbody></table>
+    <div class="pa-sign"><span>Главный судья: ${esc(S.settings.chiefJudge)}</span><span>Главный секретарь: ${esc(S.settings.chiefSec)}</span></div></div>`;
+}
+function printPayroll(){ printHTML(payrollDocHTML()); }          // в диалоге печати выберите «Сохранить как PDF»
+function wordPayroll(){ wordDoc(payrollDocHTML(), 'Зарплатная ведомость.doc'); }
+function printFinal(){ printHTML(finalDocHTML(finalSortedList())); }
+
+/* ---------- Диалоги ---------- */
+function openDlg(id){ $('#'+id).showModal(); }
+function closeDlg(id){ $('#'+id).close(); }
+
+/* ---------- Запуск ---------- */
+if(restore()) console.log('Восстановлено из localStorage');
+// лицензия: истёк срок или откат часов — работа блокируется, сохранение проекта доступно
+const licState = licenseState();
+if(licState !== 'ok'){ licenseOverlay(licState); throw new Error('license'); }
+if(LICENSE.holder){
+  const ls = document.createElement('span');
+  ls.style.cssText = 'background:#1a56db;color:#fff;padding:2px 12px;border-radius:12px;font-size:12px;white-space:nowrap';
+  ls.textContent = 'Лицензия: ' + LICENSE.holder + (LICENSE.expiry ? ' · до ' + LICENSE.expiry : '');
+  document.querySelector('header .sp').after(ls);
+}
+if(DEMO){
+  const b = document.createElement('span');
+  b.style.cssText = 'background:#c81e1e;color:#fff;padding:2px 12px;border-radius:12px;font-size:12px;white-space:nowrap';
+  b.textContent = 'ДЕМО · до ' + DEMO_LIMIT + ' судей · полная: t.me/matveich877';
+  document.querySelector('header .sp').after(b);
+}
+renderAll();
+</script>
+</body>
+</html>
